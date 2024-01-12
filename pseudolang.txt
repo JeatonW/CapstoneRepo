@@ -1,0 +1,99 @@
+CTRL + SHIFT + F:
+
+	python:
+
+		active = true
+		tabs = 0
+
+		paste("for i in range(0,0):")
+
+		startCursor(0,4)
+		highlight(1)
+
+		while(active):
+
+			if(mouseClicked):
+				active = false
+
+			if(tabPressed):
+				if(tabs == 0):
+					moveCursor(0,10)
+					highlight(1)
+				if(tabs == 1):
+					moveCursor(0,1)
+					highlight(1)
+				if(tabs == 2):
+					moveCursor(1,0)
+					paste("\t")
+					active = false
+
+				tabs = tabs + 1
+
+	java:
+
+		active = true
+		tabs = 0
+
+		paste("for(int i=START; i<SIZE; i+=INCREMENT) {\n\n}")
+
+		startCursor(0,10)
+		highlight(5)
+
+		while(active):
+
+			if(mouseClicked):
+				active = false
+
+			if(tabPressed):
+				if(tabs == 0):
+					moveCursor(0,4)
+					highlight(4)
+				if(tabs == 1):
+					moveCursor(0,5)
+					highlight(9)
+				if(tabs == 2):
+					moveCursor(1,0)
+					paste("\t")
+					active = false
+
+				tabs = tabs + 1
+
+CTRL + SHIFT + W:
+
+	python:
+
+		active = true
+
+		paste("while(i < SIZE):")
+
+		startCursor(0, 10)
+		highlight(4)
+
+		while(active):
+
+			if(mouseClicked):
+				active = false
+
+			if(tabPressed):
+				moveCursor(1, 0)
+				paste("\t")
+				active = false
+
+	java:
+
+		active = true
+
+		paste("while(i < SIZE) {\n\n}")
+
+		startCursor(0, 10)
+		highlight(4)
+
+		while(active):
+
+			if(mouseCllicked):
+				active = false
+
+			if(tabPressed):
+				moveCursor(1, 0)
+				paste("\t")
+				active = false
