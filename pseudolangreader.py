@@ -52,6 +52,16 @@ class TreeNode:
 	def getChildren(self) -> list:
 		return self.children
 
+	#validate all commands
+	def validateAllCommands(self):
+		if(self.parent != None):
+			self.parent.validateAllCommands()
+		else:
+			for hotkey in self.children:
+				for lang in hotkey.children:
+					for command in lang.children:
+						validateCommand(command.data, command.line)
+
 class HotKey:
 
 	def __init__(self, keys:list):
@@ -152,9 +162,55 @@ def checkKey(keyList:list, line:int):
 					print("Line " + str(line) + ": \"" + i + "\" is not a valid key.")
 					exit()
 
+#read all lines of the script and ensure that functions (paste(), if(), while(), highlight(), etc) use correct syntax
+def validateCommand(command:str, line:int):
+
+	#ignore variable statements i.e. "active = true"
+	if("=" in command and not "(" in command):
+		return
+
+	#available commands:
+	#if():
+	#while():
+	#highlight()
+	#paste()
+	#startCursor()
+	#moveCursor()
+
+	#check if command matches any available commands. if it does, it is correct syntax. return
+	if(command[3] == "if(" and command[-2:] == "):"):
+		return
+	if(command[:6] == "while(" and command[-2:] == "):"):
+		return
+	if(command[:10] == "highlight(" and command[-1:] == ")"):
+		return
+	if(command[:6] == "paste(" and command[-1:] == ")"):
+		return
+	if(command[:12] == "startCursor(" and command[-1:] == ")"):
+		return
+	if(command[:11] == "moveCursor(" and command[-1:] == ")"):
+		return
+
+
+	#if command does not match any available commands, syntax is incorrect. display syntax error and exit program
+	print("\nLine " + str(line) + ": Invalid syntax.\n")
+	print("   " + command)
+	errorLength = len(command.split("(")[0])
+	print("   ", end ="")
+	i = 0
+	for c in command:
+		if(i <= errorLength or i == len(command)-1):
+			print("~", end="")
+		else:
+			print(" ", end="")
+		i = i + 1
+	print()
+	exit()
+
+
 
 #read script text line to determine a user-defined hotkey and return a list of keys
-def readHotKeys() -> list:
+def validateHotKeys() -> list:
 
 	#create list of hotkeys
 	allHotKeys = []
@@ -192,6 +248,9 @@ head = TreeNode("**BEGIN SCRIPT**", 0)
 fillNode(head, 0, -1)
 
 #gather hotkeys and evaluate for syntax. exit with error if there is one. print hotkeys
-hotKeys = readHotKeys()
-print(hotKeys)
+hotKeys = validateHotKeys()
+#print(hotKeys)
 
+head.validateAllCommands()
+
+print("\nValid syntax.")
