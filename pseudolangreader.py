@@ -1,6 +1,6 @@
 class TreeNode:
 
-	#every node contains data (command), a list of children, and a parent
+	#every node contains data (command), the line that the original command in the text file was on, a list of children, and a parent
 	def __init__(self, data:str, line:int):
 		self.data = data
 		self.children = []
@@ -222,10 +222,6 @@ def validateCommand(command:str, line:int):
 		statementLength = len(statement)
 		variableLength = len(variable)
 
-		#true and false statements are allowed
-		if(statement == "true" or statement == "false"):
-			return
-
 		#remove spaces from statement (inbetween variables and operators)
 		statement = statement.replace(" ", "")
 
@@ -257,6 +253,10 @@ def validateCommand(command:str, line:int):
 		for i in variable:
 			if(not isNumOrLet(i)):
 				printSyntaxError(command, line, variableLength, 0, "")
+
+		#true and false statements are allowed
+		if(statement == "true" or statement == "false"):
+			return
 
 		#all other statements are allowed (for now)
 		return
@@ -315,7 +315,7 @@ def checkKey(command:str, keyList:list, line:int):
 
 		#if the key is a single character but is NOT (0-9, a-z, A-Z) exit program with syntax error
 		if(len(i) == 1):
-			if(isNumOrLet(ord(i[0]))):
+			if(isNumOrLet(i[0])):
 				continue
 			printSyntaxError(command, line, len(command), 0, "\"" + i + "\" is not a valid key.")
 			exit()
