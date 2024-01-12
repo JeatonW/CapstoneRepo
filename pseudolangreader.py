@@ -60,12 +60,21 @@ class TreeNode:
 			for hotkey in self.children:
 				for lang in hotkey.children:
 					for command in lang.children:
-						validateCommand(command.data, command.line)
+						command.vacHelper()
+	def vacHelper(self):
+		validateCommand(self.data, self.line)
+		for c in self.children:
+			c.vacHelper()
 
 class HotKey:
 
+	langs = []
+
 	def __init__(self, keys:list):
 		self.keys = keys
+
+	def setLangs(self, langs:list):
+		self.langs = langs
 
 #open a file, read its contents line by line
 def readScriptLineByLine(fileName:str) -> list:
@@ -127,8 +136,150 @@ def fillNode(node:TreeNode, commandIndex:int, tabs:int):
 			node.insertChild(newNode)
 		commandIndex = commandIndex + 1
 
+#returns true if character is an operator
+def isOperator(char:str) -> bool:
+	if(len(char) > 1):
+		print("Invalid length of string: " + char + ". Must be length of 1 for isOperator().")
+		exit()
+
+	if(char == '/' or char == '*' or char == '+' or char == '-'):
+		return True
+	return False
+
+#returns true if character is a number or letter
+def isNumOrLet(char:str) -> bool:
+	if(len(char) > 1):
+		print("Invalid length of string: " + char + ". Must be length of 1 for isOperator().")
+		exit()
+
+	asciiVal = ord(char)
+	if(asciiVal >= 65 and asciiVal <= 90):
+		return True
+	if(asciiVal >= 97 and asciiVal <= 122):
+		return True
+	if(asciiVal >= 48 and asciiVal <= 57):
+		return True
+
+	return False
+
+
+#read all lines of the script and ensure that functions (paste(), if(), while(), highlight(), etc) use correct syntax
+def validateCommand(command:str, line:int):
+
+	#ignore variable statements i.e. "active = true"
+	if("=" in command and not "(" in command):
+
+		splitString = command.split("=")
+		variable = splitString[0]
+		statement = splitString[1]
+
+		#remove all spaces at end of variable
+		while(True):
+			if(variable[-1:] == " "):
+				variable = variable[:-1]
+			else:
+				break
+
+		#remove all spaces before statement
+		while(True):
+			if(statement[:1] == " "):
+				statement = statement[1:]
+			else:
+				break
+
+		statementLength = len(statement)
+		variableLength = len(variable)
+
+		#print("\"" + variable + "\"")
+		#print("\"" + statement + "\"")
+
+		#true and false statements are allowed
+		if(statement == "true" or statement == "false"):
+			return
+
+		#remove spaces from statement
+		statement = statement.replace(" ", "")
+
+		#statement cannot begin or end with operators
+		if(not isNumOrLet(statement[-1:]) or not isNumOrLet(statement[:1])):
+			printSyntaxError(command, line, 0, statementLength, "")
+		
+		#separate variables/numbers/operators into a list of "items"
+		items = []
+		curItem = ""
+		for i in statement:
+			#only letters, numbers, and operators are allowed in statement
+			if(not isOperator(i) and not isNumOrLet(i)):
+				printSyntaxError(command, line, 0, statementLength, "")
+			if(not isOperator(i)):
+				curItem = curItem + i
+			else:
+				items.append(curItem)
+				items.append(i)
+				curItem = ""
+		items.append(curItem)
+
+		#if there was a blank item, that means there were 2 operators in a row. display syntax error
+		for i in items:
+			if(i == ""):
+				printSyntaxError(command, line, 0, statementLength, "")
+
+		#variable should have no spaces or operators
+		for i in variable:
+			if(not isNumOrLet(i)):
+				printSyntaxError(command, line, variableLength, 0, "")
+
+		#all other statements are allowed
+		return
+
+
+	#available commands:
+	#if():
+	#while():
+	#highlight()
+	#paste()
+	#startCursor()
+	#moveCursor()
+
+	#check if command matches any available commands. if it does, it is correct syntax. return
+	if(command[:3] == "if(" and command[-2:] == "):"):
+		return
+	elif(command[:6] == "while(" and command[-2:] == "):"):
+		return
+	elif(command[:10] == "highlight(" and command[-1:] == ")"):
+		return
+	elif(command[:6] == "paste(" and command[-1:] == ")"):
+		return
+	elif(command[:12] == "startCursor(" and command[-1:] == ")"):
+		return
+	elif(command[:11] == "moveCursor(" and command[-1:] == ")"):
+		return
+
+	#if command does not match any available commands, syntax is incorrect. display syntax error and exit program
+	else:
+		textAfterCloseParenth = command.split(")", -1)
+		errorEndLength = len(textAfterCloseParenth[len(textAfterCloseParenth)-1])
+		printSyntaxError(command, line, len(command.split("(")[0]) + 1, errorEndLength + 1, "")
+
+def printSyntaxError(command:str, line:int, errorStartLength:int, errorEndLength:int, errorMessage:str):
+		print("\nLine " + str(line) + ": Invalid syntax. " + errorMessage + "\n")
+		print("   " + command)
+		print("   ", end ="")
+
+
+		#errorLength = len(command.split("(")[0])
+		i = 0
+		for c in command:
+			if(i < errorStartLength or i > len(command)-errorEndLength-1):
+				print("~", end="")
+			else:
+				print(" ", end="")
+			i = i + 1
+		print()
+		exit()
+
 #input validation to check if each key is a real key
-def checkKey(keyList:list, line:int):
+def checkKey(command:str, keyList:list, line:int):
 
 	#for every key in key list...
 	for i in keyList:
@@ -142,7 +293,8 @@ def checkKey(keyList:list, line:int):
 				continue
 			if(asciiVal >= 48 and asciiVal <= 57):
 				continue
-			print("Line " + str(line) + ": \"" + i + "\" is not a valid key.")
+			printSyntaxError(command, line, len(command), 0, "\"" + i + "\" is not a valid key.")
+			#print("Line " + str(line) + ": \"" + i + "\" is not a valid key.")
 			exit()
 
 		#if the key is not a single character but is NOT (CTRL, SHIFT, TAB, ENTER, ALT) exit program with syntax error
@@ -159,53 +311,43 @@ def checkKey(keyList:list, line:int):
 				case "ALT":
 					continue
 				case _:
-					print("Line " + str(line) + ": \"" + i + "\" is not a valid key.")
+					printSyntaxError(command, line, len(command), 0, "\"" + i + "\" is not a valid key.")
+					#print("Line " + str(line) + ": \"" + i + "\" is not a valid key.")
 					exit()
 
-#read all lines of the script and ensure that functions (paste(), if(), while(), highlight(), etc) use correct syntax
-def validateCommand(command:str, line:int):
+def validateLangs(hotKeys:list):
 
-	#ignore variable statements i.e. "active = true"
-	if("=" in command and not "(" in command):
-		return
+	#language nodes have 1 tabs, so get grand children of the head
+	hotKeyNodes = head.getChildren()
+	hotKeyIndex = 0
+	for h in hotKeyNodes:
+		curLangNodes = h.getChildren()
 
-	#available commands:
-	#if():
-	#while():
-	#highlight()
-	#paste()
-	#startCursor()
-	#moveCursor()
+		langs = []
+		for l in curLangNodes:
 
-	#check if command matches any available commands. if it does, it is correct syntax. return
-	if(command[3] == "if(" and command[-2:] == "):"):
-		return
-	if(command[:6] == "while(" and command[-2:] == "):"):
-		return
-	if(command[:10] == "highlight(" and command[-1:] == ")"):
-		return
-	if(command[:6] == "paste(" and command[-1:] == ")"):
-		return
-	if(command[:12] == "startCursor(" and command[-1:] == ")"):
-		return
-	if(command[:11] == "moveCursor(" and command[-1:] == ")"):
-		return
+			text = l.data
 
+			if(text[len(text)-1] != ':'):
+				printSyntaxError(text, l.line, 0, 1, "Expected \":\"")
 
-	#if command does not match any available commands, syntax is incorrect. display syntax error and exit program
-	print("\nLine " + str(line) + ": Invalid syntax.\n")
-	print("   " + command)
-	errorLength = len(command.split("(")[0])
-	print("   ", end ="")
-	i = 0
-	for c in command:
-		if(i <= errorLength or i == len(command)-1):
-			print("~", end="")
-		else:
-			print(" ", end="")
-		i = i + 1
-	print()
-	exit()
+			textLength = len(text)
+
+			text = text.replace(':', '')
+			text = text.replace(' ', '')
+
+			match text:
+				case "python":
+					langs.append("python")
+					return
+				case "java":
+					langs.append("java")
+					return
+				case _:
+					printSyntaxError(l.data, l.line, textLength, 0, "Language does not exist.")
+
+		hotKeys[hotKeyIndex].setLangs(langs)
+		hotKeyIndex = hotKeyIndex + 1
 
 
 
@@ -225,7 +367,7 @@ def validateHotKeys() -> list:
 
 		#ensure line ends with colon
 		if(text[len(text)-1] != ':'):
-			print("Incorrect Syntax, expected \":\"")
+			printSyntaxError(text, curLine, 0, 1, "Expected \":\"")
 
 		#convert text data into array of keys (split string at +'s)
 		curHotKey = []
@@ -234,7 +376,7 @@ def validateHotKeys() -> list:
 		curHotKey = text.split('+')
 
 		#ensure all keys exist
-		checkKey(curHotKey, curLine)
+		checkKey(i.data, curHotKey, curLine)
 
 		#add current hotkey to list of hotkeys
 		allHotKeys.append(curHotKey)
@@ -249,7 +391,7 @@ fillNode(head, 0, -1)
 
 #gather hotkeys and evaluate for syntax. exit with error if there is one. print hotkeys
 hotKeys = validateHotKeys()
-#print(hotKeys)
+validateLangs(hotKeys)
 
 head.validateAllCommands()
 
