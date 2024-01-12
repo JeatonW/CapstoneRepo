@@ -156,32 +156,42 @@ def checkKey(keyList:list, line:int):
 #read script text line to determine a user-defined hotkey and return a list of keys
 def readHotKeys() -> list:
 
+	#create list of hotkeys
 	allHotKeys = []
 
+	#hotkey nodes have 0 tabs, so get only children of the head
 	hotKeyNodes = head.getChildren()
+
+	#for every hotkey convert the text data into a list of keys i.e. "CTRL + SHIFT + F:" -> ["CTRL", "SHIFT", "F"]
 	for i in hotKeyNodes:
 		text = i.data
 		curLine = i.line
 
+		#ensure line ends with colon
 		if(text[len(text)-1] != ':'):
 			print("Incorrect Syntax, expected \":\"")
 
+		#convert text data into array of keys (split string at +'s)
 		curHotKey = []
 		text = text.replace(' ', '')
 		text = text[:-1]
 		curHotKey = text.split('+')
 
+		#ensure all keys exist
 		checkKey(curHotKey, curLine)
 
+		#add current hotkey to list of hotkeys
 		allHotKeys.append(curHotKey)
 
+	#return list of hotkeys
 	return allHotKeys
 
-#read a script line by line, convert to a tree of commands
+#read a script line by line, convert to a tree of commands. **BEGIN SCRIPT** will be head of the tree
 commands = convertLinesToCommands(readScriptLineByLine("pseudolang.txt"))
 head = TreeNode("**BEGIN SCRIPT**", 0)
 fillNode(head, 0, -1)
 
+#gather hotkeys and evaluate for syntax. exit with error if there is one. print hotkeys
 hotKeys = readHotKeys()
 print(hotKeys)
 
