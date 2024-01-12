@@ -90,7 +90,7 @@ CTRL + ALT + W:
 
 		while(active):
 
-			if(mouseCllicked):
+			if(mouseClicked):
 				active = false
 
 			if(tabPressed):
