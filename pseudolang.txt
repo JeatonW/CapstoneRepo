@@ -1,4 +1,4 @@
-CTRL + SHIFT + F:
+CTRL + ALT + F:
 
 	python:
 
@@ -58,7 +58,7 @@ CTRL + SHIFT + F:
 
 				tabs = tabs + 1
 
-CTRL + SHIFT + W:
+CTRL + ALT + W:
 
 	python:
 

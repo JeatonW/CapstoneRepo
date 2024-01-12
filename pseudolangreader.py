@@ -68,13 +68,41 @@ class TreeNode:
 
 class HotKey:
 
+	#languages supported by this hotkey
 	langs = []
 
+	#hotkeys are a list of keys
 	def __init__(self, keys:list):
 		self.keys = keys
 
+	#set which languages are supported by this hotkey
 	def setLangs(self, langs:list):
 		self.langs = langs
+
+	#print the hotkey to text
+	def printHotKey(self):
+		print()
+		print(self.keys[0], end="")
+		i = 1
+		while(i < len(self.keys)):
+			print(" + " + self.keys[i], end="")
+			i = i + 1
+		print()
+
+	#print the list of languages to text
+	def printLangs(self):
+		print(self.langs[0], end="")
+		i = 1
+		while(i < len(self.langs)):
+			print(", " + self.langs[i], end="")
+			i = i + 1
+		print()
+
+	#print the hotkey and languages to text
+	def printAll(self):
+		self.printHotKey()
+		print("   Languages: ", end="")
+		self.printLangs()
 
 #open a file, read its contents line by line
 def readScriptLineByLine(fileName:str) -> list:
@@ -86,11 +114,11 @@ def convertLinesToCommands(lines:list) -> list:
 	#create the list of commands
 	commands = []
 
-	lineIndex = 0
-
 	#for every line...
+	lineIndex = 0
 	for l in lines:
 
+		#count how many tabs before the command
 		i = 0
 		tabs = 0
 		tabsFound = False
@@ -115,8 +143,10 @@ def convertLinesToCommands(lines:list) -> list:
 			tabCommandTuple = (tabs, command, lineIndex)
 			commands.append(tabCommandTuple)
 
+		#go to next line
 		lineIndex = lineIndex + 1
 
+	#return final list of commands
 	return commands
 
 #fill a node with children using list of commands and tabs. tabs dictate child/parent relationships between commands
@@ -141,7 +171,6 @@ def isOperator(char:str) -> bool:
 	if(len(char) > 1):
 		print("Invalid length of string: " + char + ". Must be length of 1 for isOperator().")
 		exit()
-
 	if(char == '/' or char == '*' or char == '+' or char == '-'):
 		return True
 	return False
@@ -151,7 +180,6 @@ def isNumOrLet(char:str) -> bool:
 	if(len(char) > 1):
 		print("Invalid length of string: " + char + ". Must be length of 1 for isOperator().")
 		exit()
-
 	asciiVal = ord(char)
 	if(asciiVal >= 65 and asciiVal <= 90):
 		return True
@@ -159,21 +187,24 @@ def isNumOrLet(char:str) -> bool:
 		return True
 	if(asciiVal >= 48 and asciiVal <= 57):
 		return True
-
 	return False
-
 
 #read all lines of the script and ensure that functions (paste(), if(), while(), highlight(), etc) use correct syntax
 def validateCommand(command:str, line:int):
 
-	#ignore variable statements i.e. "active = true"
+	#bogus statements are bogus
+	if(not "=" in command and not "(" in command):
+		printSyntaxError(command, line, len(command), 0, "")
+
+	#evaluate variable declarations, i.e. variable = value
 	if("=" in command and not "(" in command):
 
+		#split the string at the equals sign and evaluate both sides
 		splitString = command.split("=")
 		variable = splitString[0]
 		statement = splitString[1]
 
-		#remove all spaces at end of variable
+		#remove all spaces after variable
 		while(True):
 			if(variable[-1:] == " "):
 				variable = variable[:-1]
@@ -187,20 +218,18 @@ def validateCommand(command:str, line:int):
 			else:
 				break
 
+		#record length of both in case of syntax error
 		statementLength = len(statement)
 		variableLength = len(variable)
-
-		#print("\"" + variable + "\"")
-		#print("\"" + statement + "\"")
 
 		#true and false statements are allowed
 		if(statement == "true" or statement == "false"):
 			return
 
-		#remove spaces from statement
+		#remove spaces from statement (inbetween variables and operators)
 		statement = statement.replace(" ", "")
 
-		#statement cannot begin or end with operators
+		#statements beginning or ending with operators are not allowed
 		if(not isNumOrLet(statement[-1:]) or not isNumOrLet(statement[:1])):
 			printSyntaxError(command, line, 0, statementLength, "")
 		
@@ -219,7 +248,7 @@ def validateCommand(command:str, line:int):
 				curItem = ""
 		items.append(curItem)
 
-		#if there was a blank item, that means there were 2 operators in a row. display syntax error
+		#if there was a blank item, that means there were 2 operators in a row and that is not allowed
 		for i in items:
 			if(i == ""):
 				printSyntaxError(command, line, 0, statementLength, "")
@@ -229,9 +258,8 @@ def validateCommand(command:str, line:int):
 			if(not isNumOrLet(i)):
 				printSyntaxError(command, line, variableLength, 0, "")
 
-		#all other statements are allowed
+		#all other statements are allowed (for now)
 		return
-
 
 	#available commands:
 	#if():
@@ -241,7 +269,7 @@ def validateCommand(command:str, line:int):
 	#startCursor()
 	#moveCursor()
 
-	#check if command matches any available commands. if it does, it is correct syntax. return
+	#check if command (methods) matches any available commands. if it does, it is correct syntax. return
 	if(command[:3] == "if(" and command[-2:] == "):"):
 		return
 	elif(command[:6] == "while(" and command[-2:] == "):"):
@@ -262,21 +290,22 @@ def validateCommand(command:str, line:int):
 		printSyntaxError(command, line, len(command.split("(")[0]) + 1, errorEndLength + 1, "")
 
 def printSyntaxError(command:str, line:int, errorStartLength:int, errorEndLength:int, errorMessage:str):
-		print("\nLine " + str(line) + ": Invalid syntax. " + errorMessage + "\n")
-		print("   " + command)
-		print("   ", end ="")
 
+	#print syntax message and faulty text line
+	print("\nLine " + str(line) + ": Invalid syntax. " + errorMessage + "\n")
+	print("   " + command)
+	print("   ", end ="")
 
-		#errorLength = len(command.split("(")[0])
-		i = 0
-		for c in command:
-			if(i < errorStartLength or i > len(command)-errorEndLength-1):
-				print("~", end="")
-			else:
-				print(" ", end="")
-			i = i + 1
-		print()
-		exit()
+	#display ~ underneath problem area
+	i = 0
+	for c in command:
+		if(i < errorStartLength or i > len(command)-errorEndLength-1):
+			print("~", end="")
+		else:
+			print(" ", end="")
+		i = i + 1
+	print()
+	exit()
 
 #input validation to check if each key is a real key
 def checkKey(command:str, keyList:list, line:int):
@@ -315,43 +344,46 @@ def checkKey(command:str, keyList:list, line:int):
 					#print("Line " + str(line) + ": \"" + i + "\" is not a valid key.")
 					exit()
 
+#verify that all languages exist. add list of supported languages to their corresponding hotkey
 def validateLangs(hotKeys:list):
 
 	#language nodes have 1 tabs, so get grand children of the head
 	hotKeyNodes = head.getChildren()
 	hotKeyIndex = 0
+
+	#for every hotkey, look at its languages (children)
 	for h in hotKeyNodes:
 		curLangNodes = h.getChildren()
 
+		#for every language, check if it is a valid language
 		langs = []
 		for l in curLangNodes:
 
+			#copy text once so it can be edited without changing original
 			text = l.data
 
+			#if there is no colon, syntax error
 			if(text[len(text)-1] != ':'):
 				printSyntaxError(text, l.line, 0, 1, "Expected \":\"")
 
-			textLength = len(text)
-
+			#remove colon and spaces
 			text = text.replace(':', '')
 			text = text.replace(' ', '')
 
+			#find matches. if theres no match, syntax error
 			match text:
 				case "python":
 					langs.append("python")
-					return
 				case "java":
 					langs.append("java")
-					return
 				case _:
-					printSyntaxError(l.data, l.line, textLength, 0, "Language does not exist.")
+					printSyntaxError(l.data, l.line, len(l.data), 0, "Language does not exist.")
 
+		#add language lists to appropriate hotkey
 		hotKeys[hotKeyIndex].setLangs(langs)
 		hotKeyIndex = hotKeyIndex + 1
 
-
-
-#read script text line to determine a user-defined hotkey and return a list of keys
+#read script text line to determine a user-defined hotkey and return a list of keys. results in syntax error if keys dont exist
 def validateHotKeys() -> list:
 
 	#create list of hotkeys
@@ -379,7 +411,7 @@ def validateHotKeys() -> list:
 		checkKey(i.data, curHotKey, curLine)
 
 		#add current hotkey to list of hotkeys
-		allHotKeys.append(curHotKey)
+		allHotKeys.append(HotKey(curHotKey))
 
 	#return list of hotkeys
 	return allHotKeys
@@ -394,5 +426,8 @@ hotKeys = validateHotKeys()
 validateLangs(hotKeys)
 
 head.validateAllCommands()
+
+for h in hotKeys:
+	h.printAll()
 
 print("\nValid syntax.")
