@@ -65,7 +65,7 @@ class IDEHotkeysApp(tk.Tk):
         self.login_button.grid(row=2, column=0)
 
         #add a theme change button
-        self.theme_option_button = tk.Button(self.login_signup_frame,text = "Change Theme", command=self.perform_theme_change)
+        self.theme_option_button = tk.Button(self.login_signup_frame,text = "Darkmode", command=self.perform_theme_change)
         self.theme_option_button.grid(row=2,column=1)
 
         self.signup_button = tk.Button(self.login_signup_frame, text="Signup", command=self.perform_signup)
@@ -73,12 +73,47 @@ class IDEHotkeysApp(tk.Tk):
 
     #function to perform appropriate color changes on everything in the window
     def perform_theme_change(self):
+
+        #default for the window is white so this section changes every bg to black and fg to white
         if self.i == 0:
+            
+            #changes background of whole window
             self.configure(bg="#1c241e")
+            
+            #changes the theme text and fg and bg colors
+            self.theme_option_button.configure(text="lightmode",fg="white",bg="#1c241e")
+            #udpates i
             self.i = 1
+
+            #changes color of login frame
             self.login_signup_frame.configure(bg="#1c241e")
+            self.login_button.configure(fg="white",bg="#1c241e")
+            self.signup_button.configure(fg="white",bg="#1c241e")
+            self.password_label.configure(fg="white",bg="#1c241e")
+            self.username_label.configure(fg="white",bg="#1c241e")
+            #self.help_menu.configure(fg="white",bg="#1c241e")
+
+
+
+
         else:
+            #changes menues back to white
             self.configure(bg="white")
+            self.theme_option_button.configure(text="Darkmode",fg="#1c241e",bg="white")
+            self.login_signup_frame.configure(bg="white")
+            self.login_button.configure(fg="#1c241e",bg="white")
+            self.signup_button.configure(fg="#1c241e",bg="white")
+            self.password_label.configure(fg="#1c241e",bg="white")
+            self.username_label.configure(fg="#1c241e",bg="white")
+            
+
+
+
+
+
+
+
+
             self.i = 0
 
     def perform_login(self):
@@ -96,16 +131,24 @@ class IDEHotkeysApp(tk.Tk):
             self.password_entry.delete(0, tk.END)
 
     def create_main_frame(self):
-        self.main_frame = tk.Frame(self)
-        self.main_frame.pack(fill=tk.BOTH, expand=True)
+        if self.i == 1:
+            bg = "#1c241e"
+            fg = "white"
+        else:
+            bg = "white"
+            fg = "#1c241e"
 
-        load_script_button = tk.Button(self.main_frame, text="Load Script", command=self.load_script)
+        self.main_frame = tk.Frame(self,bg=bg)
+        self.main_frame.pack(fill=tk.BOTH, expand=True)
+     
+        
+        load_script_button = tk.Button(self.main_frame, text="Load Script", command=self.load_script,bg=bg,fg=fg)
         load_script_button.pack(pady=(10, 0))
 
-        create_new_script_button = tk.Button(self.main_frame, text="Create New Script", command=self.create_new_script)
+        create_new_script_button = tk.Button(self.main_frame, text="Create New Script", command=self.create_new_script,bg=bg,fg=fg)
         create_new_script_button.pack(pady=(10, 0))
 
-        manage_ides_button = tk.Button(self.main_frame, text="Manage IDEs", command=self.manage_ides)
+        manage_ides_button = tk.Button(self.main_frame, text="Manage IDEs", command=self.manage_ides,bg=bg,fg=fg)
         manage_ides_button.pack(pady=(10, 0))
 
     def load_script(self):
@@ -123,8 +166,13 @@ class IDEHotkeysApp(tk.Tk):
     # Create the help menu and its functionalities
     def create_menu(self):
         menu_bar = tk.Menu(self)
+        
+        #menu_bar.configure(bg="#1c241e")
+        
         self.config(menu=menu_bar)
-
+        
+       
+        #can add colors to help_menu
         help_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="Help", menu=help_menu)
         help_menu.add_command(label="How to Create Hotkeys", command=self.show_hotkey_help)
