@@ -416,11 +416,16 @@ fillNode(head, 0, -1)
 
 #gather hotkeys and evaluate for syntax. exit with error if there is one. print hotkeys
 hotKeys = validateHotKeys()
+
+#evaluate syntax for languages and add language support to hotkeys
 validateLangs(hotKeys)
 
+#evaluate all lines of code to ensure valid syntax
 head.validateAllCommands()
 
+#print hotkeys and their supported languages
 for h in hotKeys:
 	h.printAll()
 
+#if entire program runs with no issues, the syntax is valid (by current standards, anyway)
 print("\nValid syntax.")
