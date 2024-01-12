@@ -315,15 +315,9 @@ def checkKey(command:str, keyList:list, line:int):
 
 		#if the key is a single character but is NOT (0-9, a-z, A-Z) exit program with syntax error
 		if(len(i) == 1):
-			asciiVal = ord(i[0])
-			if(asciiVal >= 65 and asciiVal <= 90):
-				continue
-			if(asciiVal >= 97 and asciiVal <= 122):
-				continue
-			if(asciiVal >= 48 and asciiVal <= 57):
+			if(isNumOrLet(ord(i[0]))):
 				continue
 			printSyntaxError(command, line, len(command), 0, "\"" + i + "\" is not a valid key.")
-			#print("Line " + str(line) + ": \"" + i + "\" is not a valid key.")
 			exit()
 
 		#if the key is not a single character but is NOT (CTRL, SHIFT, TAB, ENTER, ALT) exit program with syntax error
@@ -341,7 +335,6 @@ def checkKey(command:str, keyList:list, line:int):
 					continue
 				case _:
 					printSyntaxError(command, line, len(command), 0, "\"" + i + "\" is not a valid key.")
-					#print("Line " + str(line) + ": \"" + i + "\" is not a valid key.")
 					exit()
 
 #verify that all languages exist. add list of supported languages to their corresponding hotkey
