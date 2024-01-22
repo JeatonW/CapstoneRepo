@@ -6,6 +6,30 @@ class TreeNode:
 		self.children = []
 		self.parent = None
 		self.line = line
+		self.type = self.determineType()
+
+	#determines what type of command this is (declaration? function?)
+	def determineType(self) -> str:
+		if("**BEGIN SCRIPT**" in self.data):
+			return "begin"
+		if("python" in self.data or "java" in self.data):
+			return "lang"
+		if(":" in self.data):
+			return "hotkey"
+		if("=" in self.data and not "(" in self.data):
+			return "dec"
+		if("while(" in self.data):
+			return "while"
+		if("if(" in self.data):
+			return "if"
+		if("paste(" in self.data):
+			return "paste"
+		if("highlight(" in self.data):
+			return "highlight"
+		if("startCursor(" in self.data):
+			return "start"
+		if("moveCursor(" in self.data):
+			return "move"
 
 	#returns true only if the node is the head of the tree
 	def isHead(self) -> bool:
@@ -165,6 +189,14 @@ def fillNode(node:TreeNode, commandIndex:int, tabs:int):
 			fillNode(newNode, commandIndex + 1, tabs + 1) #fill child as well (recursion)
 			node.insertChild(newNode)
 		commandIndex = commandIndex + 1
+
+def isStringANum(item:str) -> bool:
+
+	for i in item:
+		asciiVal = ord(i)
+		if(asciiVal < 48 or asciiVal > 57):
+			return False
+	return True
 
 #returns true if character is an operator
 def isOperator(char:str) -> bool:
@@ -409,6 +441,111 @@ def validateHotKeys() -> list:
 	#return list of hotkeys
 	return allHotKeys
 
+#this function is currently a mess
+def performDeclaration(node):
+	command = node.data
+	varAndStatement = command.split('=')
+	variable = varAndStatement[0]
+	statement = varAndStatement[1]
+	variable = variable.replace(' ', '')
+	statement = statement.replace(' ', '')
+
+	items = []
+	curItem = ""
+	for i in statement:
+		if(isNumOrLet(i)):
+			curItem = curItem + i
+		if(isOperator(i)):
+			items.append(curItem)
+			items.append(i)
+			curItem = ""
+	items.append(curItem)
+
+	for i in items:
+		print(i)
+
+	if(len(items) == 1):
+		if(items[0] == "true"):
+			variables[variable] = '0'
+			return
+		if(items[0] == "false"):
+			variables[variable] = '1'
+			return
+
+	#print(command)
+	totalVal = 0
+	operators = []
+	for i in items:
+
+		if(isOperator(i)):
+			operators.append(i)
+		if(isStringANum(i)):
+			totalVal = totalVal + int(i)
+		else:
+			try:
+				print(i)
+				print(variables[i])
+				totalVal = totalVal + variables[i]
+			except:
+				printSyntaxError(command, node.line, len(command), 0, "")
+
+	variables[variable] = totalVal
+
+#a while loop in the script does this
+def performWhile(node):
+	command = node.data
+	print("while: " + command)
+
+#an if statement in the script does this
+def performIf(node):
+	command = node.data
+	print("if: " + command)
+
+#a paste function in the script does this
+def performPaste(node):
+	command = node.data
+	print("paste: " + command)
+
+#a highlight function in the script does this
+def performHighlight(node):
+	command = node.data
+	print("highlight: " + command)
+
+#a startCurstor function in the script does this
+def performStart(node):
+	command = node.data
+	print("start: " + command)
+
+#a moveCursor function in the script does this
+def performMove(node):
+	command = node.data
+	print("move: " + command)
+
+#traverse the tree and perform all commands
+def performAllCommands(node):
+	
+	#depending on what type of command, it will do different things
+	match node.type:
+		case "dec":
+			performDeclaration(node)
+		case "while":
+			performWhile(node)
+		case "if":
+			performIf(node)
+		case "paste":
+			performPaste(node)
+		case "highlight":
+			performHighlight(node)
+		case "start":
+			performStart(node)
+		case "move":
+			performMove(node)
+
+	#go to children and perform their commands as well
+	for i in node.children:
+		performAllCommands(i)
+
+
 #read a script line by line, convert to a tree of commands. **BEGIN SCRIPT** will be head of the tree
 commands = convertLinesToCommands(readScriptLineByLine("pseudolang.txt"))
 head = TreeNode("**BEGIN SCRIPT**", 0)
@@ -426,6 +563,18 @@ head.validateAllCommands()
 #print hotkeys and their supported languages
 for h in hotKeys:
 	h.printAll()
+
+variables = {}
+
+#variables["variable"] = "value"
+#variables["var2"] = "val2"
+#del variables["variable"]
+
+for i in variables:
+	print(i)
+	print(variables[i])
+
+#performAllCommands(head)
 
 #if entire program runs with no issues, the syntax is valid (by current standards, anyway)
 print("\nValid syntax.")
