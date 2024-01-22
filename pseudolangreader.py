@@ -282,6 +282,7 @@ def validateCommand(command:str, line:int):
 				printSyntaxError(command, line, 0, statementLength, "")
 
 		#variable should have no spaces or operators
+		print(variable)
 		for i in variable:
 			if(not isNumOrLet(i)):
 				printSyntaxError(command, line, variableLength, 0, "")
