@@ -44,8 +44,8 @@ def ex1():
     
     # if tab is pressed again, we go to the next section (body of the for loop)
     pyautogui.press('down')
-    pyautogui.click()
     with pyautogui.hold('shift'):
-        pyautogui.press(['left','left','left','left','left','left','left','left','left'])
+        with pyautogui.hold('ctrl'):
+             pyautogui.press(['left','left'])
 
 ex1()
