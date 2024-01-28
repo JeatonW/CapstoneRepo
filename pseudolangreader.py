@@ -1,114 +1,3 @@
-class LinkedListNode:
-
-	def __init__(self, data, prevNode, nextNode):
-		self.data = data
-		self.prevNode = prevNode
-		self.nextNode = nextNode
-
-class LinkedList:
-
-	def __init__(self):
-		self.head = None
-		self.tail = None
-
-	def get(self, position):
-		curNode = head
-
-		while(position > 0):
-			curNode = curNode.nextNode
-			position = position - 1
-
-		return curNode
-
-	def append(self, data):
-		if(self.head == None and self.tail == None):
-			self.head = self.tail = LinkedListNode(data, None, None)
-			return
-
-		oldTail = self.tail
-		oldTail.nextNode = LinkedListNode(data, oldTail, None)
-		self.tail = oldTail.nextNode
-
-	def remove(self, position):
-
-		curNode = head
-		while(position > 0):
-			curNode = curNode.next
-			position = position - 1
-
-		p = curNode.prevNode
-		n = curNode.nextNode
-
-		p.nextNode = n
-		n.prevNode = p
-
-	def getArray(self):
-
-		arr = []
-
-		curNode = self.head
-		while(curNode != self.tail):
-			arr.append(curNode.data)
-			curNode = curNode.nextNode
-		arr.append(curNode.data)
-		return arr
-
-	def print(self):
-		if(self.head == None and self.tail == None):
-			print("Empty List")
-			return
-
-		curNode = self.head
-		print("<", end="")
-		while(curNode != self.tail):
-			print(curNode.data + ", ", end="")
-			curNode = curNode.nextNode
-		print(curNode.data + ">")
-
-
-def equationValue(node, eq:str):
-
-	eq = eq.replace(" ", "")
-
-	if("(" in eq or ")" in eq):
-		openP = 0
-		closeP = 0
-		for c in eq:
-			if(c == "("):
-				openP = openP + 1
-			if(c == ")"):
-				closeP = closeP + 1
-
-		if(openP != closeP):
-			printSyntaxError(node.data, node.line, len(node.data), 0, "Number of opening parentheses does not match number of closing parentheses.")
-
-	items = LinkedList()
-	curItem = ""
-	#subEq = ""
-	#inPar = False
-	for c in eq:
-		# if(c == "("):
-		# 	inPar = True
-		# if(inPar):
-		# 	if(c == ")"):
-
-		# 	subEq = subEq + c
-		if(isNumOrLet(c)):
-			curItem = curItem + c
-		if(isOperator(c)):
-			items.append(curItem)
-			items.append(c)
-			curItem = ""
-	items.append(curItem)
-
-	items.print()
-
-	for i in items.getArray():
-		if(i == ""):
-			printSyntaxError(node.data, node.line, len(node.data), 0, "Must have values on both sides of every operator.")
-
-
-
 class TreeNode:
 
 	#every node contains data (command), the line that the original command in the text file was on, a list of children, and a parent
@@ -314,7 +203,7 @@ def isOperator(char:str) -> bool:
 	if(len(char) > 1):
 		print("Invalid length of string: " + char + ". Must be length of 1 for isOperator().")
 		exit()
-	if(char == '/' or char == '*' or char == '+' or char == '-' or char == '%'):
+	if(char == '/' or char == '*' or char == '+' or char == '-' or char == '%' or char == '^'):
 		return True
 	return False
 
@@ -676,21 +565,6 @@ for h in hotKeys:
 	h.printAll()
 
 variables = {}
-
-#variables["variable"] = "value"
-#variables["var2"] = "val2"
-#del variables["variable"]
-
-# for i in variables:
-# 	print(i)
-# 	print(variables[i])
-
-#performAllCommands(head)
-
-equation = "+ 10 - 4"
-testNode = TreeNode("variable = " + equation, 0)
-
-print(equationValue(testNode, equation))
 
 #if entire program runs with no issues, the syntax is valid (by current standards, anyway)
 print("\nValid syntax.")
