@@ -128,11 +128,43 @@ class HotKey:
 		print("   Languages: ", end="")
 		self.printLangs()
 
+#returns true if a string of characters are all numbers
+def isStrNum(string:str) -> bool:
+
+	for s in string:
+		asciiVal = ord(s)
+		if(asciiVal < 48 or asciiVal > 57):
+			return False
+	return True
+
+#returns true if character is an operator
+def isOperator(char:str) -> bool:
+	if(len(char) > 1):
+		print("Invalid length of string: " + char + ". Must be length of 1 for isOperator().")
+		exit()
+	if(char == '/' or char == '*' or char == '+' or char == '-' or char == '%' or char == '^'):
+		return True
+	return False
+
+#returns true if character is a number or letter
+def isNumOrLet(char:str) -> bool:
+	if(len(char) > 1):
+		print("Invalid length of string: " + char + ". Must be length of 1 for isOperator().")
+		exit()
+	asciiVal = ord(char)
+	if(asciiVal >= 65 and asciiVal <= 90):
+		return True
+	if(asciiVal >= 97 and asciiVal <= 122):
+		return True
+	if(asciiVal >= 48 and asciiVal <= 57):
+		return True
+	return False
+
 #open a file, read its contents line by line
 def readScriptLineByLine(fileName:str) -> list:
 	return open(fileName, "r").readlines()
 
-#convert each line to a command. commands are a tuple: (# of tabs, command string)
+#convert each line to a command. commands are a tuple: (tabs:int, command:str)
 def convertLinesToCommands(lines:list) -> list:
 
 	#create the list of commands
@@ -174,7 +206,7 @@ def convertLinesToCommands(lines:list) -> list:
 	return commands
 
 #fill a node with children using list of commands and tabs. tabs dictate child/parent relationships between commands
-def fillNode(node:TreeNode, commandIndex:int, tabs:int):
+def fillNode(node:TreeNode, commands:list, commandIndex:int, tabs:int):
 
 	#for every command...
 	while(commandIndex < len(commands)):
@@ -186,40 +218,9 @@ def fillNode(node:TreeNode, commandIndex:int, tabs:int):
 		#if the number of tabs of this command is only 1 more than the current command's tabs, it will be a child
 		if(commands[commandIndex][0] == tabs + 1):
 			newNode = TreeNode(commands[commandIndex][1], commands[commandIndex][2]+1)
-			fillNode(newNode, commandIndex + 1, tabs + 1) #fill child as well (recursion)
+			fillNode(newNode, commands, commandIndex + 1, tabs + 1) #fill child as well (recursion)
 			node.insertChild(newNode)
 		commandIndex = commandIndex + 1
-
-def isStringANum(item:str) -> bool:
-
-	for i in item:
-		asciiVal = ord(i)
-		if(asciiVal < 48 or asciiVal > 57):
-			return False
-	return True
-
-#returns true if character is an operator
-def isOperator(char:str) -> bool:
-	if(len(char) > 1):
-		print("Invalid length of string: " + char + ". Must be length of 1 for isOperator().")
-		exit()
-	if(char == '/' or char == '*' or char == '+' or char == '-' or char == '%' or char == '^'):
-		return True
-	return False
-
-#returns true if character is a number or letter
-def isNumOrLet(char:str) -> bool:
-	if(len(char) > 1):
-		print("Invalid length of string: " + char + ". Must be length of 1 for isOperator().")
-		exit()
-	asciiVal = ord(char)
-	if(asciiVal >= 65 and asciiVal <= 90):
-		return True
-	if(asciiVal >= 97 and asciiVal <= 122):
-		return True
-	if(asciiVal >= 48 and asciiVal <= 57):
-		return True
-	return False
 
 #read all lines of the script and ensure that functions (paste(), if(), while(), highlight(), etc) use correct syntax
 def validateCommand(command:str, line:int):
@@ -369,6 +370,39 @@ def checkKey(command:str, keyList:list, line:int):
 					printSyntaxError(command, line, len(command), 0, "\"" + i + "\" is not a valid key.")
 					exit()
 
+#read script text line to determine a user-defined hotkey and return a list of keys. results in syntax error if keys dont exist
+def validateHotKeys() -> list:
+
+	#create list of hotkeys
+	allHotKeys = []
+
+	#hotkey nodes have 0 tabs, so get only children of the head
+	hotKeyNodes = head.getChildren()
+
+	#for every hotkey convert the text data into a list of keys i.e. "CTRL + SHIFT + F:" -> ["CTRL", "SHIFT", "F"]
+	for i in hotKeyNodes:
+		text = i.data
+		curLine = i.line
+
+		#ensure line ends with colon
+		if(text[len(text)-1] != ':'):
+			printSyntaxError(text, curLine, 0, 1, "Expected \":\"")
+
+		#convert text data into array of keys (split string at +'s)
+		curHotKey = []
+		text = text.replace(' ', '')
+		text = text[:-1]
+		curHotKey = text.split('+')
+
+		#ensure all keys exist
+		checkKey(i.data, curHotKey, curLine)
+
+		#add current hotkey to list of hotkeys
+		allHotKeys.append(HotKey(curHotKey))
+
+	#return list of hotkeys
+	return allHotKeys
+
 #verify that all languages exist. add list of supported languages to their corresponding hotkey
 def validateLangs(hotKeys:list):
 
@@ -408,38 +442,29 @@ def validateLangs(hotKeys:list):
 		hotKeys[hotKeyIndex].setLangs(langs)
 		hotKeyIndex = hotKeyIndex + 1
 
-#read script text line to determine a user-defined hotkey and return a list of keys. results in syntax error if keys dont exist
-def validateHotKeys() -> list:
+#traverse the tree and perform all commands
+def performAllCommands(node):
+	
+	#depending on what type of command, it will do different things
+	match node.type:
+		case "dec":
+			performDeclaration(node)
+		case "while":
+			performWhile(node)
+		case "if":
+			performIf(node)
+		case "paste":
+			performPaste(node)
+		case "highlight":
+			performHighlight(node)
+		case "start":
+			performStart(node)
+		case "move":
+			performMove(node)
 
-	#create list of hotkeys
-	allHotKeys = []
-
-	#hotkey nodes have 0 tabs, so get only children of the head
-	hotKeyNodes = head.getChildren()
-
-	#for every hotkey convert the text data into a list of keys i.e. "CTRL + SHIFT + F:" -> ["CTRL", "SHIFT", "F"]
-	for i in hotKeyNodes:
-		text = i.data
-		curLine = i.line
-
-		#ensure line ends with colon
-		if(text[len(text)-1] != ':'):
-			printSyntaxError(text, curLine, 0, 1, "Expected \":\"")
-
-		#convert text data into array of keys (split string at +'s)
-		curHotKey = []
-		text = text.replace(' ', '')
-		text = text[:-1]
-		curHotKey = text.split('+')
-
-		#ensure all keys exist
-		checkKey(i.data, curHotKey, curLine)
-
-		#add current hotkey to list of hotkeys
-		allHotKeys.append(HotKey(curHotKey))
-
-	#return list of hotkeys
-	return allHotKeys
+	#go to children and perform their commands as well
+	for i in node.children:
+		performAllCommands(i)
 
 #this function is currently a mess
 def performDeclaration(node):
@@ -479,7 +504,7 @@ def performDeclaration(node):
 
 		if(isOperator(i)):
 			operators.append(i)
-		if(isStringANum(i)):
+		if(isStrNum(i)):
 			totalVal = totalVal + int(i)
 		else:
 			try:
@@ -521,35 +546,14 @@ def performMove(node):
 	command = node.data
 	print("move: " + command)
 
-#traverse the tree and perform all commands
-def performAllCommands(node):
-	
-	#depending on what type of command, it will do different things
-	match node.type:
-		case "dec":
-			performDeclaration(node)
-		case "while":
-			performWhile(node)
-		case "if":
-			performIf(node)
-		case "paste":
-			performPaste(node)
-		case "highlight":
-			performHighlight(node)
-		case "start":
-			performStart(node)
-		case "move":
-			performMove(node)
+#read a script line by line, convert to an array of commands. a command is a tuple: (tabs:int, code:str, line:int)
+commandsArray = convertLinesToCommands(readScriptLineByLine("pseudolang.txt"))
 
-	#go to children and perform their commands as well
-	for i in node.children:
-		performAllCommands(i)
-
-
-#read a script line by line, convert to a tree of commands. **BEGIN SCRIPT** will be head of the tree
-commands = convertLinesToCommands(readScriptLineByLine("pseudolang.txt"))
+#create the head of a tree. it will be called **BEGIN SCRIPT**.
 head = TreeNode("**BEGIN SCRIPT**", 0)
-fillNode(head, 0, -1)
+
+#fill this tree using the commands. the number of tabs on a tree represent what level it is on the tree.
+fillNode(head, commandsArray, 0, -1)
 
 #gather hotkeys and evaluate for syntax. exit with error if there is one. print hotkeys
 hotKeys = validateHotKeys()

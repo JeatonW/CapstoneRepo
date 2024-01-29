@@ -73,6 +73,7 @@ class LinkedList:
 		#if inserting at the end or higher, just append
 		if(position >= self.size):
 			self.append(data)
+			return
 
 		#go to the position we will be inserting at
 		curNode = self.head
@@ -293,6 +294,10 @@ def assessParentheses(equation:str) -> str:
 	#if there are no parentheses, end the method with no changes
 	if(not openFound and not closedFound):
 		return originalEquation
+
+	#if an open parenthesis was found but not a closed parenthesis, something is wrong
+	if(openFound and not closedFound):
+		raise Exception("Closed parenthesis was expected.")
 
 	#remember original equation before the parentheses
 	originalStart = equation[:openIndex]
