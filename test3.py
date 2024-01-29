@@ -6,6 +6,7 @@ import os
 
 # Path to the user data file
 USERS_FILE = 'users.json'
+CONFIG_FILE = 'config.json'
 
 # Function to load users data
 def load_users():
@@ -13,6 +14,18 @@ def load_users():
         return {}
     with open(USERS_FILE, 'r') as file:
         return json.load(file)
+
+#used read from the config.json
+def load_settings():
+    if not os.path.exists(CONFIG_FILE):
+        return {}
+    with open(CONFIG_FILE, 'r') as file:
+        return json.load(file)
+
+#called when the save button is clicked
+def save_config(settings):
+    with open(CONFIG_FILE,'w') as file:
+        json.dump(settings, file)
 
 # Function to save users data
 def save_users(users):
@@ -37,15 +50,20 @@ def signup(username, password, users):
     messagebox.showinfo("Signup Success", "You have successfully signed up.")
     return True
 
+
+
+
+#main tkinter window start
 class IDEHotkeysApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("IDE Hotkeys Customizer")
         self.geometry("800x600")
         self.users = load_users()
-        self.create_menu()  # Create the menu bar with the Help option
+        self.settings = load_settings()
+        #self.create_menu()  # Create the menu bar with the Help option
         self.create_login_signup_frame()
-        self.i = 0
+
 
     def create_login_signup_frame(self):
         self.login_signup_frame = tk.Frame(self)
@@ -64,65 +82,21 @@ class IDEHotkeysApp(tk.Tk):
         self.login_button = tk.Button(self.login_signup_frame, text="Login", command=self.perform_login)
         self.login_button.grid(row=2, column=0)
 
-        #add a theme change button
-        self.theme_option_button = tk.Button(self.login_signup_frame,text = "Darkmode", command=self.perform_theme_change)
-        self.theme_option_button.grid(row=2,column=1)
-
         self.signup_button = tk.Button(self.login_signup_frame, text="Signup", command=self.perform_signup)
-        self.signup_button.grid(row=2, column=2)
+        self.signup_button.grid(row=2, column=1)
 
     #function to perform appropriate color changes on everything in the window
-    def perform_theme_change(self):
-
-        #default for the window is white so this section changes every bg to black and fg to white
-        if self.i == 0:
-            
-            #changes background of whole window
-            self.configure(bg="#1c241e")
-            
-            #changes the theme text and fg and bg colors
-            self.theme_option_button.configure(text="lightmode",fg="white",bg="#1c241e")
-            #udpates i
-            self.i = 1
-
-            #changes color of login frame
-            self.login_signup_frame.configure(bg="#1c241e")
-            self.login_button.configure(fg="white",bg="#1c241e")
-            self.signup_button.configure(fg="white",bg="#1c241e")
-            self.password_label.configure(fg="white",bg="#1c241e")
-            self.username_label.configure(fg="white",bg="#1c241e")
-            #self.help_menu.configure(fg="white",bg="#1c241e")
-
-
-
-
-        else:
-            #changes menues back to white
-            self.configure(bg="white")
-            self.theme_option_button.configure(text="Darkmode",fg="#1c241e",bg="white")
-            self.login_signup_frame.configure(bg="white")
-            self.login_button.configure(fg="#1c241e",bg="white")
-            self.signup_button.configure(fg="#1c241e",bg="white")
-            self.password_label.configure(fg="#1c241e",bg="white")
-            self.username_label.configure(fg="#1c241e",bg="white")
-            
-
-
-
-
-
-
-
-
-            self.i = 0
-
+    
+    #called when the login button is pressed
     def perform_login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
         if login(username, password, self.users):
             self.login_signup_frame.destroy()
             self.create_main_frame()
+            self.create_menu()
 
+    #called when the signup button is pressed
     def perform_signup(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
@@ -130,25 +104,20 @@ class IDEHotkeysApp(tk.Tk):
             self.username_entry.delete(0, tk.END)
             self.password_entry.delete(0, tk.END)
 
+    #creates the starting frame and its buttons
     def create_main_frame(self):
-        if self.i == 1:
-            bg = "#1c241e"
-            fg = "white"
-        else:
-            bg = "white"
-            fg = "#1c241e"
 
-        self.main_frame = tk.Frame(self,bg=bg)
+        self.main_frame = tk.Frame(self)
         self.main_frame.pack(fill=tk.BOTH, expand=True)
      
         
-        load_script_button = tk.Button(self.main_frame, text="Load Script", command=self.load_script,bg=bg,fg=fg)
+        load_script_button = tk.Button(self.main_frame, text="Load Script", command=self.load_script)
         load_script_button.pack(pady=(10, 0))
 
-        create_new_script_button = tk.Button(self.main_frame, text="Create New Script", command=self.create_new_script,bg=bg,fg=fg)
+        create_new_script_button = tk.Button(self.main_frame, text="Create New Script", command=self.create_new_script)
         create_new_script_button.pack(pady=(10, 0))
 
-        manage_ides_button = tk.Button(self.main_frame, text="Manage IDEs", command=self.manage_ides,bg=bg,fg=fg)
+        manage_ides_button = tk.Button(self.main_frame, text="Manage IDEs", command=self.manage_ides)
         manage_ides_button.pack(pady=(10, 0))
 
     def load_script(self):
@@ -163,23 +132,116 @@ class IDEHotkeysApp(tk.Tk):
         # Placeholder for managing IDEs functionality
         pass
 
-    # Create the help menu and its functionalities
+
+
+    #called when the settings button in the menu bar is clicked
+    def go_to_settings(self):
+        self.main_frame.destroy()
+        self.create_settings()
+
+
+    #Create the help menu and its functionalities
     def create_menu(self):
         menu_bar = tk.Menu(self)
-        
-        #menu_bar.configure(bg="#1c241e")
-        
         self.config(menu=menu_bar)
         
-       
-        #can add colors to help_menu
+        #creates the help tab in the menu bar
         help_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="Help", menu=help_menu)
         help_menu.add_command(label="How to Create Hotkeys", command=self.show_hotkey_help)
 
+        #createst a setting tab
+        settings_menu = tk.Menu(menu_bar,tearoff=0)
+        menu_bar.add_cascade(label="Settings",menu=settings_menu)
+        settings_menu.add_command(label="Change Settings",command=self.go_to_settings)
+
+    #displays a message after help menu button is clicked
     def show_hotkey_help(self):
         help_message = "To create a hotkey:\n1. Go to the 'Create New Script' section.\n2. Enter the name of the IDE and the hotkey combination you wish to use.\n3. Describe the action the hotkey will perform.\n4. Click 'Save' to store your new hotkey."
         messagebox.showinfo("How to Create Hotkeys", help_message)
+
+    #saves the settings
+    def save(self,variable):
+        self.update()
+        #manually set catigory need to find a way to grab the box name
+        catigory = "bg"
+        print(variable.get())
+        value = variable.get()
+        self.configure_json(catigory,value,self.settings)
+    def configure_json(self,catigory,value, settings):
+            settings[catigory] = value
+            save_config(settings)
+    #reposible for creating the entire settings frame/window
+    def create_settings(self):
+        self.update()
+
+        #background of the settings window
+        self.settings_window = tk.Frame(self,bg="#add8e6",width=self.winfo_width())
+        self.settings_window.pack(fill = tk.BOTH,side = tk.TOP,anchor = tk.NE,expand = True)
+
+        #settings frame on the left that holds the buttons
+        self.settings_frame = tk.Frame(self.settings_window, bg = "gray",width=20,height = self.winfo_height())
+        self.settings_frame.pack(side=tk.LEFT,anchor = tk.W,fill=tk.Y)
+
+        #window the the right of the button that displays the currently selected section/button
+        self.settings_display = tk.Frame(self.settings_window)
+        self.settings_display.pack(side=tk.RIGHT,anchor=tk.E,expand = True,fill=tk.BOTH,pady=5)
+
+
+        #everything under here is under the settings_display frame and should inherit from such
+
+        #note when adding stuff to here Grid should be used as it is easier to allight stuff
+
+        Colors = ["red","orange","yellow","green","blue","purple","pink","brown","gray","white","black"]
+        variable = tk.StringVar(self.settings_display)
+        variable.set(Colors[9]) #default value of the list
+
+        variable2 =tk.StringVar(self.settings_display)
+        variable2.set(Colors[9])
+
+        bg_label = tk.Label(self.settings_display,text="Background Color:")
+        bg_option = tk.OptionMenu(self.settings_display,variable,*Colors)
+
+        fg_label = tk.Label(self.settings_display,text="Forground Color:")        
+        fg_option = tk.OptionMenu(self.settings_display,variable2,*Colors)
+
+        bg_label.grid(row=0,column=1,sticky='') 
+        bg_option.grid(row=0,column=2,sticky='')
+        
+        fg_label.grid(row=1,column=1,sticky='')
+        fg_option.grid(row=1,column=2,sticky='')
+        
+
+        save_button = tk.Button(self.settings_display,text="Save",command=lambda: self.save(variable))
+        save_button.grid(row=2,column=2,sticky='')
+        self.settings_display.grid_columnconfigure((0,3), weight=1)
+
+        ########################end of settings display######################
+
+
+        #all buttons on the left hand side of the settings menue will go here
+        profile = tk.Button(self.settings_frame,text="profile",fg="black",font=5)
+        profile.pack(side= tk.TOP,anchor = tk.W,fill=tk.BOTH,expand=True)
+
+        preferences_settings = tk.Button(self.settings_frame,text="Preferences",fg="black",font=5)
+        preferences_settings.pack(side= tk.TOP,anchor = tk.N,fill=tk.BOTH,expand=True)
+
+        other_settings = tk.Button(self.settings_frame,text="other",fg="black",font=5)
+        other_settings.pack(side= tk.TOP,anchor = tk.N,fill=tk.BOTH,expand=True)
+
+        placeholder = tk.Button(self.settings_frame,text="rdm",fg="black",font=5)
+        placeholder.pack(side= tk.TOP,anchor = tk.N,fill=tk.BOTH,expand=True)
+
+        #theback button destroys the settings window and rebuilds the main frame and menu bar
+        back = tk.Button(self.settings_frame,text="back",command=lambda:[self.settings_window.destroy(),self.create_main_frame(),self.create_menu()],fg="black",font=10)
+        back.pack(side= tk.TOP,anchor = tk.N,fill=tk.BOTH,expand=True)
+
+    
+
+
+
+
+
 
 def main():
     app = IDEHotkeysApp()
@@ -187,3 +249,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    #atexit.register()
