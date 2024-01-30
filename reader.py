@@ -10,12 +10,13 @@ class TreeNode:
 
 	#determines what type of command this is (declaration? function?)
 	def determineType(self) -> str:
-		print(self.data[-2:])
-		# :num -> beginning
 
-		if("**BEGIN SCRIPT**" in self.data):
+		# :num -> beginning 2
+		# -num: -> end 2
+
+		if("**BEGIN SCRIPT**" == self.data):
 			return "begin"
-		if("::" in self.data):
+		if("::" == ):
 			return "hotkey"
 		if(":" in self.data):
 			return "lang"
