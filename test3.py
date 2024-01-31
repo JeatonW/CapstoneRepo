@@ -55,6 +55,7 @@ def signup(username, password, users):
 
 #main tkinter window start
 class IDEHotkeysApp(tk.Tk):
+    
     def __init__(self):
         super().__init__()
         self.title("IDE Hotkeys Customizer")
@@ -62,11 +63,15 @@ class IDEHotkeysApp(tk.Tk):
         self.users = load_users()
         self.settings = load_settings()
         #self.create_menu()  # Create the menu bar with the Help option
+        self.bg = self.settings["bg"]
+        self.file = "pseudolang2.txt"
+        
         self.create_login_signup_frame()
 
+        
 
     def create_login_signup_frame(self):
-        self.login_signup_frame = tk.Frame(self)
+        self.login_signup_frame = tk.Frame(self,bg=self.bg)
         self.login_signup_frame.pack(pady=50)
 
         self.username_label = tk.Label(self.login_signup_frame, text="Username:")
@@ -107,7 +112,7 @@ class IDEHotkeysApp(tk.Tk):
     #creates the starting frame and its buttons
     def create_main_frame(self):
 
-        self.main_frame = tk.Frame(self)
+        self.main_frame = tk.Frame(self,bg=self.bg)
         self.main_frame.pack(fill=tk.BOTH, expand=True)
      
         
@@ -122,8 +127,37 @@ class IDEHotkeysApp(tk.Tk):
 
     def load_script(self):
         # Placeholder for loading script functionality
-        pass
 
+        #will have each hotkeys keys displayed need window
+        mini_window = tk.Tk()
+        mini_window.title("Keys")
+        mini_window.geometry("250x150")
+        key_list = []
+
+        #organizes file into a nested list
+        with open(self.file) as x:
+            for line in x:
+                if line[0] != "\t" and line[0].isalpha() and line[0] != "\n":
+                    key_list.append(line.replace("\n","").replace(" ","").replace(":","").split("+"))
+                else:
+                    pass
+        #creates the frame in the window and loops through the key_list to display the buttons in window
+        key_background = tk.Frame(mini_window,bg = self.bg)
+        key_background.pack(fill=tk.BOTH,expand = True)
+        sep = " + "
+        
+        #creates labesl and buttons for how ever many hotkeys there are
+        for i in key_list:
+            x = key_list.index(i)
+            name = tk.Label(key_background,text = f"Key Number:{x}")
+            name.grid(row=x,column=1)
+            key = tk.Button(key_background,text = sep.join(i))
+            key.grid(row=x,column=2,sticky='',padx=5) 
+        
+        #adds weight to the edge grids to center it
+        key_background.grid_columnconfigure((0,3), weight=1)
+        mini_window.mainloop()
+    
     def create_new_script(self):
         # Placeholder for creating new script functionality
         pass
@@ -168,6 +202,13 @@ class IDEHotkeysApp(tk.Tk):
         print(variable.get())
         value = variable.get()
         self.configure_json(catigory,value,self.settings)
+        
+        #this needs to a function that recalls everything in the config
+        self.bg = self.settings["bg"]
+
+        #need a smarter way to update the current window, might just have to configure this manaully tho
+        self.settings_display.config(bg=self.bg)
+        self.update()
     def configure_json(self,catigory,value, settings):
             settings[catigory] = value
             save_config(settings)
@@ -176,15 +217,15 @@ class IDEHotkeysApp(tk.Tk):
         self.update()
 
         #background of the settings window
-        self.settings_window = tk.Frame(self,bg="#add8e6",width=self.winfo_width())
+        self.settings_window = tk.Frame(self,bg=self.bg,width=self.winfo_width())
         self.settings_window.pack(fill = tk.BOTH,side = tk.TOP,anchor = tk.NE,expand = True)
 
         #settings frame on the left that holds the buttons
-        self.settings_frame = tk.Frame(self.settings_window, bg = "gray",width=20,height = self.winfo_height())
+        self.settings_frame = tk.Frame(self.settings_window, bg = self.bg,width=20,height = self.winfo_height())
         self.settings_frame.pack(side=tk.LEFT,anchor = tk.W,fill=tk.Y)
 
         #window the the right of the button that displays the currently selected section/button
-        self.settings_display = tk.Frame(self.settings_window)
+        self.settings_display = tk.Frame(self.settings_window,bg = self.bg)
         self.settings_display.pack(side=tk.RIGHT,anchor=tk.E,expand = True,fill=tk.BOTH,pady=5)
 
 
