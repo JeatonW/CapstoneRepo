@@ -1,39 +1,13 @@
+import CommandFormatter as CF
+
 class TreeNode:
 
 	#every node contains data (command), the line that the original command in the text file was on, a list of children, and a parent
-	def __init__(self, data:str, line:int):
+	def __init__(self, data, line:int):
 		self.data = data
 		self.children = []
 		self.parent = None
 		self.line = line
-		self.type = self.determineType()
-
-	#determines what type of command this is (declaration? function?)
-	def determineType(self) -> str:
-
-		# :num -> beginning 2
-		# -num: -> end 2
-
-		if("**BEGIN SCRIPT**" == self.data):
-			return "begin"
-		if("::" == ):
-			return "hotkey"
-		if(":" in self.data):
-			return "lang"
-		if("=" in self.data and not "(" in self.data):
-			return "dec"
-		if("while(" in self.data):
-			return "while"
-		if("if(" in self.data):
-			return "if"
-		if("paste(" in self.data):
-			return "paste"
-		if("highlight(" in self.data):
-			return "highlight"
-		if("startCursor(" in self.data):
-			return "start"
-		if("moveCursor(" in self.data):
-			return "move"
 
 	#returns true only if the node is the head of the tree
 	def isHead(self) -> bool:
@@ -50,15 +24,34 @@ class TreeNode:
 		self.children.append(child)
 		child.setParent(self)
 
+	def printTuples(self):
+		self.printTuplesHelper(0)
+	def printTuplesHelper(self, tabs):
+		for i in range(0, tabs):
+			print("   ", end="")
+		print(self.data)
+		for i in self.children:
+			i.printTuplesHelper(tabs + 1)
+
 	#print tree in preorder traversal
 	def printTree(self):
 		self.printTreeHelper(0)
 	def printTreeHelper(self, tabs):
 		for i in range(0, tabs):
 			print("   ", end="")
-		print(self.data)
+		self.data.print()
 		for i in self.children:
 			i.printTreeHelper(tabs + 1)
+
+	def solveAndPrint(self):
+		self.solveAndPrintHelper(0)
+	def solveAndPrintHelper(self, tabs):
+		for i in range(0, tabs):
+			print("   ", end="")
+		self.data.solve()
+		self.data.print()
+		for i in self.children:
+			i.solveAndPrintHelper(tabs + 1)
 
 	#get a node using its index in preorder traversal
 	def getNode(self, num:int):
@@ -142,12 +135,38 @@ def printSyntaxError(command:str, line:int, errorStartLength:int, errorEndLength
 	#exit the program
 	exit()
 
+#determines what type of command this is (declaration? function?)
+def formatCommand(command:str):
+
+	if("**BEGIN SCRIPT**" == command):
+		return CF.ScriptBegin()
+	elif("::" == command[-2:]):
+		return CF.HotKey()
+	elif("while(" == command[:6]):
+		return CF.While(command)
+	elif("for(" == command[:4]):
+		return CF.For(command)
+	elif("if(" == command[:3]):
+		return CF.If(command)
+	elif(":" == command[-1:]):
+		return CF.Language()
+	elif("paste(" == command[:6]):
+		return CF.Paste(command)
+	elif("highlight(" == command[:10]):
+		return CF.Highlight(command)
+	elif("startCursor(" == command[:12]):
+		return CF.StartCursor(command)
+	elif("moveCursor(" == command[:11]):
+		return CF.MoveCursor(command)
+	else:
+		return CF.Declaration(command)
+
 #open a file, read its contents line by line
 def readScriptLineByLine(fileName:str) -> list:
 	return open(fileName, "r").readlines()
 
 #convert each line to a command. commands are a tuple: (tabs:int, command:str)
-def convertLinesToCommands(fileName:list) -> list:
+def convertLinesToTuples(fileName:list) -> list:
 
 	lines = readScriptLineByLine(fileName)
 
@@ -180,7 +199,13 @@ def convertLinesToCommands(fileName:list) -> list:
 
 		#delete empty lines
 		if(command != ""):
-			tabCommandTuple = (tabs, command, lineIndex)
+
+			formattedCommand = formatCommand(command)
+			#print(formattedCommand)
+			#print("TEST")
+			#formattedCommand.print()
+
+			tabCommandTuple = (tabs, formatCommand(command), lineIndex)
 			commands.append(tabCommandTuple)
 
 		#go to next line
@@ -206,108 +231,13 @@ def fillNode(node:TreeNode, commands:list, commandIndex:int, tabs:int):
 			node.insertChild(newNode)
 		commandIndex = commandIndex + 1
 
-#input validation to check if each key is a real key
-def checkKey(command:str, keyList:list, line:int):
-
-	#for every key in key list...
-	for i in keyList:
-
-		#if the key is a single character but is NOT (0-9, a-z, A-Z) exit program with syntax error
-		if(len(i) == 1):
-			if(isNumOrLet(i[0])):
-				continue
-			printSyntaxError(command, line, len(command), 0, "\"" + i + "\" is not a valid key.")
-			exit()
-
-		#if the key is not a single character but is NOT (CTRL, SHIFT, TAB, ENTER, ALT) exit program with syntax error
-		else:
-			match i:
-				case "CTRL_L":
-					continue
-				case "SHIFT_L":
-					continue
-				case "ALT_L":
-					continue
-				case "CTRL_R":
-					continue
-				case "SHIFT_R":
-					continue
-				case "ALT_R":
-					continue
-				case "TAB":
-					continue
-				case "ENTER":
-					continue
-				case "F1":
-					continue
-				case "F2":
-					continue
-				case "F3":
-					continue
-				case "F4":
-					continue
-				case "F5":
-					continue
-				case "F6":
-					continue
-				case "F7":
-					continue
-				case "F8":
-					continue
-				case "F9":
-					continue
-				case "F10":
-					continue
-				case "F11":
-					continue
-				case "F12":
-					continue
-				case _:
-					printSyntaxError(command, line, len(command), 0, "\"" + i + "\" is not a valid key.")
-					exit()
-
-#read script text line to determine a user-defined hotkey and return a list of keys. results in syntax error if keys dont exist
-def createHotKeys() -> list:
-
-	#create list of hotkeys
-	allHotKeys = []
-
-	#hotkey nodes have 0 tabs, so get only children of the head
-	hotKeyNodes = head.getChildren()
-
-	#for every hotkey convert the text data into a list of keys i.e. "CTRL + SHIFT + F:" -> ["CTRL", "SHIFT", "F"]
-	for i in hotKeyNodes:
-		text = i.data
-		curLine = i.line
-
-		#ensure line ends with colon
-		if(text[len(text)-1] != ':'):
-			printSyntaxError(text, curLine, 0, 1, "Expected \":\"")
-
-		#convert text data into array of keys (split string at +'s)
-		curHotKey = []
-		text = text.replace(' ', '')
-		text = text[:-1]
-		curHotKey = text.split('+')
-
-		#ensure all keys exist
-		checkKey(i.data, curHotKey, curLine)
-
-		#add current hotkey to list of hotkeys
-		allHotKeys.append(HotKey(curHotKey))
-
-	#return list of hotkeys
-	return allHotKeys
-
 #read a script line by line, convert to an array of commands. a command is a tuple: (tabs:int, code:str, line:int)
-commandsArray = convertLinesToCommands("pseudolang2.txt")
+tupleArray = convertLinesToTuples(input("Input file name: "))
 
 #create the head of a tree. it will be called **BEGIN SCRIPT**.
-head = TreeNode("**BEGIN SCRIPT**", 0)
+head = TreeNode(CF.ScriptBegin(), 0)
 
 #fill this tree using the commands. the number of tabs on a tree represent what level it is on the tree.
-fillNode(head, commandsArray, 0, -1)
+fillNode(head, tupleArray, 0, -1)
 
-hotkeys = createHotKeys()
-
-keysPressedByUser = ["CTRL_L", "ALT_L", "F"]
+head.solveAndPrint()

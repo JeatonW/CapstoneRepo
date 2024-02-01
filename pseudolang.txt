@@ -1,99 +1,64 @@
-CTRL + ALT + F:
+CTRL_L + ALT_L + F::
 
-	python:
+	active = true
+	tabs = 0
 
-		active = true
-		tabs = 0
-
+	py:
 		paste("for i in range(0,0):")
-
 		startCursor(0,4)
 		highlight(1)
-
-		while(active):
-
-			if(mouseClicked):
-				active = false
-
-			if(tabPressed):
-				if(tabs == 0):
-					moveCursor(0,10)
-					highlight(1)
-				if(tabs == 1):
-					moveCursor(0,1)
-					highlight(1)
-				if(tabs == 2):
-					moveCursor(1,0)
-					paste("\t")
-					active = false
-
-				tabs = tabs + 1
-
 	java:
-
-		active = true
-		tabs = 0
-
 		paste("for(int i=START; i<SIZE; i+=INCREMENT) {\n\n}")
-
 		startCursor(0,10)
 		highlight(5)
 
-		while(active):
+	while(active):
 
-			if(mouseClicked):
-				active = false
+		if(mouseClicked):
+			active = false
 
-			if(tabPressed):
-				if(tabs == 0):
+		if(tabPressed):
+			if(tabs == 0):
+				py:
+					moveCursor(0,10)
+					highlight(1)
+				java:
 					moveCursor(0,4)
 					highlight(4)
-				if(tabs == 1):
+
+			if(tabs == 1):
+				py:
+					moveCursor(0,1)
+					highlight(1)
+				java:
 					moveCursor(0,5)
 					highlight(9)
-				if(tabs == 2):
-					moveCursor(1,0)
-					paste("\t")
-					active = false
-
-				tabs = tabs + 1
-
-CTRL + ALT + W:
-
-	python:
-
-		active = true
-
-		paste("while(i < SIZE):")
-
-		startCursor(0, 10)
-		highlight(4)
-
-		while(active):
-
-			if(mouseClicked):
-				active = false
-
-			if(tabPressed):
-				moveCursor(1, 0)
+			if(tabs == 2):
+				moveCursor(1,0)
 				paste("\t")
 				active = false
 
+			tabs = tabs + 1
+
+CTRL_L + ALT_L + W::
+
+	active = true
+
+	py:
+		paste("while(i < SIZE):")
 	java:
-
-		active = true
-
 		paste("while(i < SIZE) {\n\n}")
 
-		startCursor(0, 10)
-		highlight(4)
+	startCursor(0, 10)
+	highlight(4)
 
-		while(active):
 
-			if(mouseClicked):
-				active = false
+	while(active):
 
-			if(tabPressed):
-				moveCursor(1, 0)
-				paste("\t")
-				active = false
+		if(mouseClicked):
+			active = false
+
+		if(tabPressed):
+			moveCursor(1, 0)
+			paste("\t")
+			active = false

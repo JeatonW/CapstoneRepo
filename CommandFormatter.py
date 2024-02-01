@@ -9,6 +9,12 @@ class FormattedCommand:
 	def __init__(self, comType:str):
 		self.comType = comType
 
+	def solve(self):
+		pass
+
+	def print(self):
+		print(self.comType)
+
 	#returns true if a character is a letter or an underscore
 	def isLet(self, character:str) -> bool:
 
@@ -132,10 +138,10 @@ class FormattedCommand:
 
 		string = self.replaceVarsWithVals(string)
 
-		if(string == "true"):
-			value = 1
-		elif(string == "false"):
-			value = 0
+		if(string == "true" or string == " true"):
+			return 1
+		elif(string == "false" or string == " false"):
+			return 0
 		elif("\"" in string):
 			value = ss.solveString(string)
 		else:
@@ -158,6 +164,7 @@ class FormattedCommand:
 				match(varDict.getType(k)):
 
 					case "Float":
+						#print(string + " " + str(varDict.get(k)))
 						string = string.replace(k, str(varDict.get(k)))
 					case "String":
 						string = self.replaceOutsideQuotes(string, k)
@@ -188,8 +195,8 @@ class FormattedCommand:
 	def checkUndeclared(self, string:str):
 
 		for c in string:
-			if(self.isLet(c)):
-				raise Exception("Undefined variable.")
+			if(self.isLet(c) and string != "true" and string != " true" and string != "false" and string != " false"):
+				raise Exception("Undefined variable: \"" + string + "\"")
 
 	#makes sure there is an appropriate number of variables, and that no variable is undeclared
 	def argumentSyntax(self, string:str, args:int):
@@ -199,18 +206,36 @@ class FormattedCommand:
 
 		vals = string.split(",")
 
+		#invalid # of args
 		if(len(vals) != args):
 			raise Exception(self.comType + " method takes " + str(args) + " argument, but " + str(len(vals)) + " were given.")
 
+		#no args were given
 		if(len(vals) == 1 and vals[0] == ""):
 			raise Exception(self.comType + " method takes " + str(args) + " argument, but 0 were given.")
 
+		#check for any undeclared variables
 		index = 0
 		for v in vals:
 			self.checkUndeclared(v)
 			index = index + 1
 
 		return vals
+
+class ScriptBegin(FormattedCommand):
+
+	def __init__(self):
+		super().__init__("Script Begin")
+
+class HotKey(FormattedCommand):
+
+	def __init__(self):
+		super().__init__("HotKey")
+
+class Language(FormattedCommand):
+
+	def __init__(self):
+		super().__init__("Language")
 
 class Declaration(FormattedCommand):
 
@@ -327,11 +352,11 @@ class Highlight(FormattedCommand):
 		if(originalCodeLine[:10] != "highlight(" or originalCodeLine[-1:] != ")"):
 			raise Exception("Invalid syntax for Highlight method.")
 
-		self.val = self.argumentSyntax(originalCodeLine[10:-1], 1)[0]
 		self.originalCodeLine = originalCodeLine
 
 	def solve(self):
-		self.distance = es.solveEquation(self.val)
+		val = self.argumentSyntax(self.originalCodeLine[10:-1], 1)[0]
+		self.distance = es.solveEquation(val)
 
 	def print(self):
 		if(self.distance == None):
@@ -355,12 +380,13 @@ class StartCursor(FormattedCommand):
 		if(originalCodeLine[:12] != "startCursor(" or originalCodeLine[-1:] != ")"):
 			raise Exception("Invalid syntax for Start Cursor method.")
 
-		self.vals = self.argumentSyntax(originalCodeLine[12:-1], 2)
 		self.originalCodeLine = originalCodeLine
 
 	def solve(self):
-		self.startX = es.solveEquation(self.vals[0])
-		self.startY = es.solveEquation(self.vals[1])
+		vals = self.argumentSyntax(self.originalCodeLine[12:-1], 2)
+
+		self.startX = es.solveEquation(vals[0])
+		self.startY = es.solveEquation(vals[1])
 
 	def print(self):
 		if(self.startX == self.startY == None):
@@ -380,12 +406,13 @@ class MoveCursor(FormattedCommand):
 		if(originalCodeLine[:11] != "moveCursor(" or originalCodeLine[-1:] != ")"):
 			raise Exception("Invalid syntax for Move Cursor method.")
 
-		self.vals = self.argumentSyntax(originalCodeLine[11:-1], 2)
 		self.originalCodeLine = originalCodeLine
 
 	def solve(self):
-		self.moveX = es.solveEquation(self.vals[0])
-		self.moveY = es.solveEquation(self.vals[1])
+		vals = self.argumentSyntax(self.originalCodeLine[11:-1], 2)
+
+		self.moveX = es.solveEquation(vals[0])
+		self.moveY = es.solveEquation(vals[1])
 
 	def print(self):
 		if(self.moveX == self.moveY == None):
@@ -420,43 +447,44 @@ class For(FormattedCommand):
 	def checkSyntax(self, originalCodeLine:str):
 		pass
 
-print()
-varTest = Declaration("var1 = 4*4/8")
-varTest2 = Declaration("var2 = 3/3")
-varTest.print()
-varTest2.print()
-varTest.solve()
-varTest2.solve()
-varTest.print()
-varTest2.print()
-print()
+# print()
+# varTest = Declaration("var1 = 4*4/8")
+# varTest2 = Declaration("var2 = 3/3")
+# varTest.print()
+# varTest2.print()
+# varTest.solve()
+# varTest2.solve()
+# varTest.print()
+# varTest2.print()
+# print()
 
-testString = Declaration("stringVar = \"test \"")
-testString.print()
-testString.solve()
-testString.print()
-print()
+# testString = Declaration("stringVar = \"test \"")
+# testString.print()
+# testString.solve()
+# testString.print()
+# print()
 
-pasteTest = Paste("paste(stringVar + \"this is a stringVar string \" + \"that will get pasted.\")")
-pasteTest.print()
-pasteTest.solve()
-pasteTest.print()
-print()
+# pasteTest = Paste("paste(stringVar + \"this is a stringVar string \" + \"that will get pasted.\")")
+# pasteTest.print()
+# pasteTest.solve()
+# pasteTest.print()
+# print()
 
-highTest = Highlight("highlight(var1/2)")
-highTest.print()
-highTest.solve()
-highTest.print()
-print()
+# highTest = Highlight("highlight(var1/2)")
+# highTest.print()
+# highTest.solve()
+# highTest.print()
+# print()
 
-scTest = StartCursor("startCursor(var1,var2)")
-scTest.print()
-scTest.solve()
-scTest.print()
-print()
+# scTest = StartCursor("startCursor(var1,var2)")
+# scTest.print()
+# scTest.solve()
+# scTest.print()
+# print()
 
-mcTest = MoveCursor("moveCursor(12/3, var1)")
-mcTest.print()
-mcTest.solve()
-mcTest.print()
-print()
+# mcTest = MoveCursor("moveCursor(12/3, var1)")
+# mcTest.print()
+# mcTest.solve()
+# mcTest.print()
+# print()
+

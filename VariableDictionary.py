@@ -3,7 +3,8 @@ class VariableDictionary:
 	varDict = {}
 
 	def __init__(self):
-		pass
+		self.varDict["false"] = 0
+		self.varDict["true"] = 1
 
 	def getKeyList(self) -> list:
 		return list(self.varDict.keys())
