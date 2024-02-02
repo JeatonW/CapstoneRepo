@@ -1,20 +1,23 @@
-
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk, messagebox, font
 import json
 import os
 
 # Path to the user data file
 USERS_FILE = 'users.json'
 
-# Function to load users data
+# Global variables for action history
+undo_stack = []
+redo_stack = []
+
+# Load users data
 def load_users():
     if not os.path.exists(USERS_FILE):
         return {}
     with open(USERS_FILE, 'r') as file:
         return json.load(file)
 
-# Function to save users data
+# Save users data
 def save_users(users):
     with open(USERS_FILE, 'w') as file:
         json.dump(users, file)
@@ -37,90 +40,109 @@ def signup(username, password, users):
     messagebox.showinfo("Signup Success", "You have successfully signed up.")
     return True
 
-class IDEHotkeysApp(tk.Tk):
-    def __init__(self):
-        super().__init__()
-        self.title("IDE Hotkeys Customizer")
-        self.geometry("800x600")
-        self.users = load_users()
-        self.create_menu()  # Create the menu bar with the Help option
-        self.create_login_signup_frame()
+# Undo action function
+def undo_action():
+    if not undo_stack:
+        messagebox.showinfo("Undo", "No actions to undo.")
+        return
+    action = undo_stack.pop()
+    # Placeholder for undo action logic
+    redo_stack.append(action)  # Prepare for potential redo
+    messagebox.showinfo("Undo", "Action undone.")
 
-    def create_login_signup_frame(self):
-        self.login_signup_frame = tk.Frame(self)
-        self.login_signup_frame.pack(pady=50)
+# Redo action function
+def redo_action():
+    if not redo_stack:
+        messagebox.showinfo("Redo", "No actions to redo.")
+        return
+    action = redo_stack.pop()
+    # Placeholder for redo action logic
+    undo_stack.append(action)  # Allow this action to be undone again
+    messagebox.showinfo("Redo", "Action redone.")
 
-        self.username_label = tk.Label(self.login_signup_frame, text="Username:")
-        self.username_label.grid(row=0, column=0)
-        self.username_entry = tk.Entry(self.login_signup_frame)
-        self.username_entry.grid(row=0, column=1)
+# Creating the main window
+root = tk.Tk()
+root.title("User Authentication System")
 
-        self.password_label = tk.Label(self.login_signup_frame, text="Password:")
-        self.password_label.grid(row=1, column=0)
-        self.password_entry = tk.Entry(self.login_signup_frame, show="*")
-        self.password_entry.grid(row=1, column=1)
+# Styling
+style = ttk.Style()
+style.theme_use('clam')  # Using a more modern theme
+bg_color = '#333333'  # Dark background
+fg_color = '#ffffff'  # White foreground
+button_color = '#0066cc'  # Blue buttons
+input_font = font.Font(family="Arial", size=12)
+label_font = font.Font(family="Arial", size=14, weight='bold')
+root.configure(bg=bg_color)
+root.geometry("400x300")
 
-        self.login_button = tk.Button(self.login_signup_frame, text="Login", command=self.perform_login)
-        self.login_button.grid(row=2, column=0)
+# Function to switch to login frame
+def show_login_frame():
+    signup_frame.pack_forget()
+    login_frame.pack(fill="both", expand=True)
 
-        self.signup_button = tk.Button(self.login_signup_frame, text="Signup", command=self.perform_signup)
-        self.signup_button.grid(row=2, column=1)
+# Function to switch to signup frame
+def show_signup_frame():
+    login_frame.pack_forget()
+    signup_frame.pack(fill="both", expand=True)
 
-    def perform_login(self):
-        username = self.username_entry.get()
-        password = self.password_entry.get()
-        if login(username, password, self.users):
-            self.login_signup_frame.destroy()
-            self.create_main_frame()
+# Update the GUI to include Undo and Redo
+def create_menu():
+    main_menu = tk.Menu(root)
+    root.config(menu=main_menu)
+    
+    file_menu = tk.Menu(main_menu, tearoff=0)
+    main_menu.add_cascade(label="File", menu=file_menu)
+    file_menu.add_command(label="Undo", command=undo_action)
+    file_menu.add_command(label="Redo", command=redo_action)
 
-    def perform_signup(self):
-        username = self.username_entry.get()
-        password = self.password_entry.get()
-        if signup(username, password, self.users):
-            self.username_entry.delete(0, tk.END)
-            self.password_entry.delete(0, tk.END)
+    help_menu = tk.Menu(main_menu, tearoff=0)
+    main_menu.add_cascade(label="Help", menu=help_menu)
+    # Add Help menu items as before
 
-    def create_main_frame(self):
-        self.main_frame = tk.Frame(self)
-        self.main_frame.pack(fill=tk.BOTH, expand=True)
+# Initialize UI components
+create_menu()
 
-        load_script_button = tk.Button(self.main_frame, text="Load Script", command=self.load_script)
-        load_script_button.pack(pady=(10, 0))
+# Frames for Login and Signup
+login_frame = ttk.Frame(root, padding="10")
+signup_frame = ttk.Frame(root, padding="10")
 
-        create_new_script_button = tk.Button(self.main_frame, text="Create New Script", command=self.create_new_script)
-        create_new_script_button.pack(pady=(10, 0))
+# Login UI Elements
+username_label = ttk.Label(login_frame, text="Username:", font=input_font)
+username_label.pack(pady=(10, 0))
+username_entry = ttk.Entry(login_frame, font=input_font)
+username_entry.pack()
 
-        manage_ides_button = tk.Button(self.main_frame, text="Manage IDEs", command=self.manage_ides)
-        manage_ides_button.pack(pady=(10, 0))
+password_label = ttk.Label(login_frame, text="Password:", font=input_font)
+password_label.pack(pady=(10, 0))
+password_entry = ttk.Entry(login_frame, font=input_font, show="*")
+password_entry.pack()
 
-    def load_script(self):
-        # Placeholder for loading script functionality
-        pass
+login_button = ttk.Button(login_frame, text="Login", command=lambda: login(username_entry.get(), password_entry.get(), load_users()))
+login_button.pack(pady=20)
 
-    def create_new_script(self):
-        # Placeholder for creating new script functionality
-        pass
+to_signup_button = ttk.Button(login_frame, text="Create Account", command=show_signup_frame)
+to_signup_button.pack()
 
-    def manage_ides(self):
-        # Placeholder for managing IDEs functionality
-        pass
+# Signup UI Elements
+new_username_label = ttk.Label(signup_frame, text="New Username:", font=input_font)
+new_username_label.pack(pady=(10, 0))
+new_username_entry = ttk.Entry(signup_frame, font=input_font)
+new_username_entry.pack()
 
-    # Create the help menu and its functionalities
-    def create_menu(self):
-        menu_bar = tk.Menu(self)
-        self.config(menu=menu_bar)
+new_password_label = ttk.Label(signup_frame, text="New Password:", font=input_font)
+new_password_label.pack(pady=(10, 0))
+new_password_entry = ttk.Entry(signup_frame, font=input_font, show="*")
+new_password_entry.pack()
 
-        help_menu = tk.Menu(menu_bar, tearoff=0)
-        menu_bar.add_cascade(label="Help", menu=help_menu)
-        help_menu.add_command(label="How to Create Hotkeys", command=self.show_hotkey_help)
+signup_button = ttk.Button(signup_frame, text="Signup", command=lambda: signup(new_username_entry.get(), new_password_entry.get(), load_users()))
+signup_button.pack(pady=20)
 
-    def show_hotkey_help(self):
-        help_message = "To create a hotkey:\n1. Go to the 'Create New Script' section.\n2. Enter the name of the IDE and the hotkey combination you wish to use.\n3. Describe the action the hotkey will perform.\n4. Click 'Save' to store your new hotkey."
-        messagebox.showinfo("How to Create Hotkeys", help_message)
+to_login_button = ttk.Button(signup_frame, text="Already have an account?", command=show_login_frame)
+to_login_button.pack()
 
-def main():
-    app = IDEHotkeysApp()
-    app.mainloop()
+# Show the login frame initially
+show_login_frame()
 
-if __name__ == "__main__":
-    main()
+# Start the application
+root.mainloop()
+
