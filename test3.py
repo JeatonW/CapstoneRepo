@@ -1,3 +1,8 @@
+
+def show_help():
+    help_text = "To create a hotkey:\n1. Choose a key combination.\n2. Assign an action to the combination.\n3. Save your settings."
+    messagebox.showinfo("Help - Create Hotkeys", help_text)
+
 import tkinter as tk
 from tkinter import ttk, messagebox, font
 import json
@@ -97,7 +102,20 @@ def create_menu():
 
     help_menu = tk.Menu(main_menu, tearoff=0)
     main_menu.add_cascade(label="Help", menu=help_menu)
-    # Add Help menu items as before
+    
+def create_menu():
+    main_menu = tk.Menu(root)
+    root.config(menu=main_menu)
+    
+    file_menu = tk.Menu(main_menu, tearoff=0)
+    main_menu.add_cascade(label="File", menu=file_menu)
+    file_menu.add_command(label="Undo", command=undo_action)
+    file_menu.add_command(label="Redo", command=redo_action)
+
+    help_menu = tk.Menu(main_menu, tearoff=0)
+    help_menu.add_command(label="How to create hotkeys", command=show_help)
+    main_menu.add_cascade(label="Help", menu=help_menu)
+
 
 # Initialize UI components
 create_menu()
