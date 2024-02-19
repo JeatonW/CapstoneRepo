@@ -53,6 +53,11 @@ class TreeNode:
 		for i in self.children:
 			i.solveAndPrintHelper(tabs + 1)
 
+	def solve(self):
+		self.data.solve()
+		for i in self.children:
+			i.solve()
+
 	#get a node using its index in preorder traversal
 	def getNode(self, num:int):
 		if(num == 0):
@@ -67,20 +72,6 @@ class TreeNode:
 	#get the list of children for this node
 	def getChildren(self) -> list:
 		return self.children
-
-	#validate all commands
-	def validateAllCommands(self):
-		if(self.parent != None):
-			self.parent.validateAllCommands()
-		else:
-			for hotkey in self.children:
-				for lang in hotkey.children:
-					for command in lang.children:
-						command.vacHelper()
-	def vacHelper(self):
-		validateCommand(self.data, self.line)
-		for c in self.children:
-			c.vacHelper()
 
 #returns true if a string of characters are all numbers
 def isStrNum(string:str) -> bool:
@@ -141,7 +132,7 @@ def formatCommand(command:str):
 	if("**BEGIN SCRIPT**" == command):
 		return CF.ScriptBegin()
 	elif("::" == command[-2:]):
-		return CF.HotKey()
+		return CF.HotKey(command)
 	elif("while(" == command[:6]):
 		return CF.While(command)
 	elif("for(" == command[:4]):
@@ -231,13 +222,20 @@ def fillNode(node:TreeNode, commands:list, commandIndex:int, tabs:int):
 			node.insertChild(newNode)
 		commandIndex = commandIndex + 1
 
-#read a script line by line, convert to an array of commands. a command is a tuple: (tabs:int, code:str, line:int)
-tupleArray = convertLinesToTuples(input("Input file name: "))
+#perform all necessary methods to create a command tree from a file name
+def createCommandTree(fileName:str) -> TreeNode:
 
-#create the head of a tree. it will be called **BEGIN SCRIPT**.
-head = TreeNode(CF.ScriptBegin(), 0)
+	#read a script line by line, convert to an array of commands. a command is a tuple: (tabs:int, code:str, line:int)
+	tupleArray = convertLinesToTuples(fileName)
 
-#fill this tree using the commands. the number of tabs on a tree represent what level it is on the tree.
-fillNode(head, tupleArray, 0, -1)
+	#create the head of a tree. it will be called **BEGIN SCRIPT**.
+	headNode = TreeNode(CF.ScriptBegin(), 0)
 
+	#fill this tree using the commands. the number of tabs on a tree represent what level it is on the tree.
+	fillNode(headNode, tupleArray, 0, -1)
+
+	return headNode
+
+
+head = createCommandTree(input("Input file name: "))
 head.solveAndPrint()

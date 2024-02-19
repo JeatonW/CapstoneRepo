@@ -54,6 +54,33 @@ class FormattedCommand:
 
 		return False
 
+	#returns true if the string is an existing key
+	def checkKey(self, string:str) -> bool:
+
+		match(string):
+			case "CTRL_L":
+				return True
+			case "CTRL_R":
+				return True
+			case "SHIFT_L":
+				return True
+			case "SHIFT_R":
+				return True
+			case "ALT_L":
+				return True
+			case "ALT_R":
+				return True
+			case "TAB":
+				return True
+			case "ESC":
+				return True
+			case "ENTER":
+				return True
+			case "SPACE":
+				return True
+			case _:
+				return self.isNumOrLet(string)
+
 	#returns true only if a singular character is a mathematical operator
 	def isOperator(self, character:str) -> bool:
 
@@ -229,8 +256,50 @@ class ScriptBegin(FormattedCommand):
 
 class HotKey(FormattedCommand):
 
-	def __init__(self):
+	def __init__(self, originalCodeLine:str):
 		super().__init__("HotKey")
+
+		self.keys = []
+		self.checkSyntax(originalCodeLine)
+
+	def checkSyntax(self, originalCodeLine:str):
+		
+		if(originalCodeLine[-2:] != "::"):
+			raise Exception("Invalid syntax for HotKey.")
+
+		self.originalCodeLine = originalCodeLine
+
+	def solve(self):
+
+		#remove colons
+		eq = self.originalCodeLine[:-2]
+
+		#remove spaces
+		eq = eq.replace(" ", "")
+
+		keyList = eq.split("+")
+
+		for k in keyList:
+			if(self.checkKey(k)):
+				self.keys.append(k)
+			else:
+				raise Exception("Invalid key: " + k)
+
+	def print(self):
+		if(len(self.keys) == 0):
+			print("HotKey (Unsolved): " + self.originalCodeLine)
+		else:
+			print("HotKey: [", end="")
+
+			index = 0
+			for k in self.keys:
+				if(index != len(self.keys) - 1):
+					print(k, end=", ")
+				else:
+					print(k, end="")
+				index = index + 1
+			print("]")
+
 
 class Language(FormattedCommand):
 
