@@ -90,6 +90,45 @@ def show_signup_frame():
     login_frame.pack_forget()
     signup_frame.pack(fill="both", expand=True)
 
+# Function to get the currently focused widget and perform actions
+def get_focused_input_field():
+    focused_widget = root.focus_get()
+    if focused_widget in [username_entry, password_entry, new_username_entry, new_password_entry]:
+        return focused_widget
+    return None
+
+# Function to copy text from the focused input field to the clipboard
+def copy_text():
+    widget = get_focused_input_field()
+    if widget:
+        try:
+            text = widget.selection_get()
+            root.clipboard_clear()
+            root.clipboard_append(text)
+        except tk.TclError:
+            messagebox.showwarning('Copy', 'No text selected.')
+
+# Function to cut text from the focused input field to the clipboard
+def cut_text():
+    widget = get_focused_input_field()
+    if widget:
+        try:
+            copy_text()  # Copy text first
+            widget.delete("sel.first", "sel.last")
+        except tk.TclError:
+            messagebox.showwarning('Cut', 'No text selected.')
+
+# Function to paste text from the clipboard into the focused input field
+def paste_text():
+    widget = get_focused_input_field()
+    if widget:
+        try:
+            widget.insert(tk.INSERT, root.clipboard_get())
+        except tk.TclError:
+            messagebox.showwarning('Paste', 'Nothing to paste.')
+
+
+
 # Update the GUI to include Undo and Redo
 def create_menu():
     main_menu = tk.Menu(root)
@@ -116,6 +155,14 @@ def create_menu():
     help_menu.add_command(label="How to create hotkeys", command=show_help)
     main_menu.add_cascade(label="Help", menu=help_menu)
 
+
+
+# Adding Edit menu for cut, copy, paste functionalities
+    edit_menu = tk.Menu(main_menu, tearoff=0)
+    edit_menu.add_command(label="Cut", command=cut_text)
+    edit_menu.add_command(label="Copy", command=copy_text)
+    edit_menu.add_command(label="Paste", command=paste_text)
+    main_menu.add_cascade(label="Edit", menu=edit_menu)
 
 # Initialize UI components
 create_menu()
@@ -163,4 +210,7 @@ show_login_frame()
 
 # Start the application
 root.mainloop()
+
+
+
 
