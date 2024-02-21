@@ -1,3 +1,5 @@
+Doccumentation for Capstone Project
+
 Overview:
 
 This file outlines the structure and functionalities of a python based graphical user interface (GUI) application. It shows the user to sign up and log in using a username and password. User credentials are managed and stored in a JSON file. 
