@@ -65,31 +65,44 @@ class IDEHotkeysApp(tk.Tk):
         #self.create_menu()  # Create the menu bar with the Help option
         self.bg = self.settings["bg"]
         self.file = "pseudolang2.txt"
-        
         self.create_login_signup_frame()
 
         
 
     def create_login_signup_frame(self):
         self.login_signup_frame = tk.Frame(self,bg=self.bg)
-        self.login_signup_frame.pack(pady=50)
+        self.login_signup_frame.pack(fill=tk.BOTH,expand = True)
 
-        self.username_label = tk.Label(self.login_signup_frame, text="Username:")
-        self.username_label.grid(row=0, column=0)
+        #self.username_label = tk.Label(self.login_signup_frame, text="Username:",bg=self.bg)
+        #self.username_label.grid(row=1, column=1)
+
         self.username_entry = tk.Entry(self.login_signup_frame)
-        self.username_entry.grid(row=0, column=1)
+        self.username_entry.grid(row=1, column=1,ipadx = 20,sticky = "w")
+        self.username_entry.insert(0,"Username")
+        self.username_entry.bind("<FocusIn>",self.clear_username)
 
-        self.password_label = tk.Label(self.login_signup_frame, text="Password:")
-        self.password_label.grid(row=1, column=0)
-        self.password_entry = tk.Entry(self.login_signup_frame, show="*")
-        self.password_entry.grid(row=1, column=1)
+        #self.password_label = tk.Label(self.login_signup_frame, text="Password:",bg=self.bg)
+        #self.password_label.grid(row=2, column=1)
+
+        self.password_entry = tk.Entry(self.login_signup_frame)
+        self.password_entry.grid(row=2, column=1,ipadx = 20,pady = (0,5),sticky = "w")
+        self.password_entry.insert(0,"Password")
+        self.password_entry.bind("<FocusIn>",self.clear_password)
 
         self.login_button = tk.Button(self.login_signup_frame, text="Login", command=self.perform_login)
-        self.login_button.grid(row=2, column=0)
+        self.login_button.grid(row=4, column=1,ipadx=60,pady = (10,0),sticky = "w")
 
         self.signup_button = tk.Button(self.login_signup_frame, text="Signup", command=self.perform_signup)
-        self.signup_button.grid(row=2, column=1)
+        self.signup_button.grid(row=5, column=1,ipadx=56,sticky = "w")
+        
+        self.login_signup_frame.grid_columnconfigure((0,2), weight=1)
+        self.login_signup_frame.grid_rowconfigure((0,6,7,8,9),weight=1)
 
+
+    def clear_username(self,e):
+         self.username_entry.delete(0,"end")
+    def clear_password(self,e):
+        self.password_entry.delete(0,"end")
     #function to perform appropriate color changes on everything in the window
     
     #called when the login button is pressed
