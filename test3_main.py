@@ -1,9 +1,10 @@
 
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import filedialog
 import json
 import os
-import reader
+#import reader
 
 # Path to the user data file
 USERS_FILE = 'users.json'
@@ -130,7 +131,7 @@ class IDEHotkeysApp(tk.Tk):
         self.main_frame.pack(fill=tk.BOTH, expand=True)
      
         
-        load_script_button = tk.Button(self.main_frame, text="Load Script", command=self.load_script)
+        load_script_button = tk.Button(self.main_frame, text="Load Script", command=lambda:[self.open_file_script(),self.load_script()])
         load_script_button.pack(pady=(10, 0))
 
         create_new_script_button = tk.Button(self.main_frame, text="Create New Script", command=self.create_new_script)
@@ -140,8 +141,9 @@ class IDEHotkeysApp(tk.Tk):
         manage_ides_button.pack(pady=(10, 0))
 
     def load_script(self):
-        tree = Reader.createCommandTree(self.file)
-        tree.solveAndPrint()
+        #tree = Reader.createCommandTree(self.file)
+        #tree.solveAndPrint()
+
         # Placeholder for loading script functionality
 
         #will have each hotkeys keys displayed need window
@@ -173,11 +175,26 @@ class IDEHotkeysApp(tk.Tk):
         #adds weight to the edge grids to center it
         key_background.grid_columnconfigure((0,3), weight=1)
         mini_window.mainloop()
-    
+    def open_file_script(self):
+        script_filepath = filedialog.askopenfilename()
+        if script_filepath:
+            print("file has been found and will be used in the current profile")
+        else:
+            print("there was an error selecting the file")
+
     def create_new_script(self):
         # Placeholder for creating new script functionality
-        pass
+        self.main_frame.destroy()
 
+        self.create_new_script_bg = tk.Frame(self,bg=self.bg)
+        self.create_new_script_bg.place(x=0,y=0,relwidth=1,relheight=1)
+
+
+        placeholder_label = tk.Label(self.create_new_script_bg,text = "this is a place where they can add hotkeys on to there scrip file")
+        placeholder_label.grid()
+
+        self.back = tk.Button(self.create_new_script_bg,text="back",command = lambda:[self.create_new_script_bg.destroy(),self.create_main_frame()])
+        self.back.grid()
     def manage_ides(self):
         # Placeholder for managing IDEs functionality
         pass
