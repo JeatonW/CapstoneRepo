@@ -1,0 +1,18 @@
+T + E + S + T::
+
+	mathVar1 = 10/2*3-1
+	mathVar2 = 2^3-1
+	mathVar3 = 1+(5+3)/2
+	mathVar4 = mathVar1 + 2
+
+	increment = 0
+	increment = increment + 1
+	increment = increment + 1
+	increment = increment + 1
+
+	stringVar = "the string " + "variable"
+
+	paste("pasting the string variable: " + stringVar)
+	highlight(mathVar1)
+	startCursor(mathVar1/mathVar2, 10+2)
+	moveCursor(mathVar4, 9)
