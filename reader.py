@@ -48,15 +48,49 @@ class TreeNode:
 	def solveAndPrintHelper(self, tabs):
 		for i in range(0, tabs):
 			print("   ", end="")
-		self.data.solve()
+
+		try:
+			self.data.solve()
+		except Exception as e:
+			print("\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine))
+			print(e)
+			exit()
 		self.data.print()
-		for i in self.children:
-			i.solveAndPrintHelper(tabs + 1)
+
+
+		if(self.data.comType == "If"):
+			if(self.data.comparisonAnswer == "1"):
+				for i in self.children:
+					i.solveAndPrintHelper(tabs + 1)
+		elif(self.data.comType == "While"):
+			while(self.data.comparisonAnswer == "1"):
+
+				for i in self.children:
+
+					i.solveAndPrintHelper(tabs + 1)
+					for i in range(0, tabs):
+						print("   ", end="")
+					self.data.solve()
+					self.data.print()
+		else:
+			for i in self.children:
+				i.solveAndPrintHelper(tabs + 1)
 
 	def solve(self):
 		self.data.solve()
-		for i in self.children:
-			i.solve()
+
+		if(self.data.comType == "If"):
+			if(self.data.comparisonAnswer == "1"):
+				for i in self.children:
+					i.solve()
+		elif(self.data.comType == "While"):
+			while(self.data.comparisonAnswer == "1"):
+				for i in self.children:
+					i.solve()
+					self.data.solve()
+		else:
+			for i in self.children:
+				i.solve()
 
 	#get a node using its index in preorder traversal
 	def getNode(self, num:int):
@@ -191,12 +225,19 @@ def convertLinesToTuples(fileName:list) -> list:
 		#delete empty lines
 		if(command != ""):
 
-			formattedCommand = formatCommand(command)
+			try:
+				formattedCommand = formatCommand(command)
+			except Exception as e:
+				print("\nLine " + str(lineIndex+1) + ": " + command)
+				print(e)
+				exit()
+
+
 			#print(formattedCommand)
 			#print("TEST")
 			#formattedCommand.print()
 
-			tabCommandTuple = (tabs, formatCommand(command), lineIndex)
+			tabCommandTuple = (tabs, formattedCommand, lineIndex)
 			commands.append(tabCommandTuple)
 
 		#go to next line

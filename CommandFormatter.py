@@ -1,13 +1,15 @@
 import EquationSolver as es
 import StringSolver as ss
+import ComparisonSolver as cs
 from VariableDictionary import VariableDictionary as VD
 
 varDict = VD()
 
 class FormattedCommand:
 
-	def __init__(self, comType:str):
+	def __init__(self, comType:str, originalCodeLine:str):
 		self.comType = comType
+		self.originalCodeLine = originalCodeLine
 
 	def solve(self):
 		pass
@@ -252,12 +254,12 @@ class FormattedCommand:
 class ScriptBegin(FormattedCommand):
 
 	def __init__(self):
-		super().__init__("Script Begin")
+		super().__init__("Script Begin", "None")
 
 class HotKey(FormattedCommand):
 
 	def __init__(self, originalCodeLine:str):
-		super().__init__("HotKey")
+		super().__init__("HotKey", originalCodeLine)
 
 		self.keys = []
 		self.checkSyntax(originalCodeLine)
@@ -266,8 +268,6 @@ class HotKey(FormattedCommand):
 		
 		if(originalCodeLine[-2:] != "::"):
 			raise Exception("Invalid syntax for HotKey.")
-
-		self.originalCodeLine = originalCodeLine
 
 	def solve(self):
 
@@ -303,13 +303,13 @@ class HotKey(FormattedCommand):
 
 class Language(FormattedCommand):
 
-	def __init__(self):
-		super().__init__("Language")
+	def __init__(self, originalCodeLine:str):
+		super().__init__("Language", originalCodeLine)
 
 class Declaration(FormattedCommand):
 
 	def __init__(self, originalCodeLine:str):
-		super().__init__("Declaration")
+		super().__init__("Declaration", originalCodeLine)
 
 		#remove spaces from the line of code
 		#originalCodeLine = originalCodeLine.replace(" ", "")
@@ -382,19 +382,14 @@ class Declaration(FormattedCommand):
 class Paste(FormattedCommand):
 
 	def __init__(self, originalCodeLine:str):
-		super().__init__("Paste")
+		super().__init__("Paste", originalCodeLine)
 		self.checkSyntax(originalCodeLine)
 		self.string = None
 
 	def checkSyntax(self, originalCodeLine:str):
 		
 		if(originalCodeLine[:6] != "paste(" or originalCodeLine[-1:] != ")"):
-			raise Exception("Invalid syntax for Highlight method.")
-
-		#if(originalCodeLine[6:7] != "\"" or originalCodeLine[-2:-1] != "\""):
-		#	raise Exception("Paste method must have one argument surrounded by quotations.")
-
-		self.originalCodeLine = originalCodeLine
+			raise Exception("Invalid syntax for Paste method.")
 
 	def solve(self):
 		self.string = self.solveEquation(self.originalCodeLine[6:-1])
@@ -408,7 +403,7 @@ class Paste(FormattedCommand):
 class Highlight(FormattedCommand):
 
 	def __init__(self, originalCodeLine:str):
-		super().__init__("Highlight")
+		super().__init__("Highlight", originalCodeLine)
 
 		#remove spaces from the line of code
 		originalCodeLine = originalCodeLine.replace(" ", "")
@@ -420,8 +415,6 @@ class Highlight(FormattedCommand):
 		
 		if(originalCodeLine[:10] != "highlight(" or originalCodeLine[-1:] != ")"):
 			raise Exception("Invalid syntax for Highlight method.")
-
-		self.originalCodeLine = originalCodeLine
 
 	def solve(self):
 		val = self.argumentSyntax(self.originalCodeLine[10:-1], 1)[0]
@@ -436,7 +429,7 @@ class Highlight(FormattedCommand):
 class StartCursor(FormattedCommand):
 
 	def __init__(self, originalCodeLine:str):
-		super().__init__("Start Cursor")
+		super().__init__("Start Cursor", originalCodeLine)
 
 		#remove spaces from the line of code
 		originalCodeLine = originalCodeLine.replace(" ", "")
@@ -448,8 +441,6 @@ class StartCursor(FormattedCommand):
 		
 		if(originalCodeLine[:12] != "startCursor(" or originalCodeLine[-1:] != ")"):
 			raise Exception("Invalid syntax for Start Cursor method.")
-
-		self.originalCodeLine = originalCodeLine
 
 	def solve(self):
 		vals = self.argumentSyntax(self.originalCodeLine[12:-1], 2)
@@ -466,7 +457,7 @@ class StartCursor(FormattedCommand):
 class MoveCursor(FormattedCommand):
 
 	def __init__(self, originalCodeLine:str):
-		super().__init__("Move Cursor")
+		super().__init__("Move Cursor", originalCodeLine)
 		self.checkSyntax(originalCodeLine)
 		self.moveX = self.moveY = None
 
@@ -474,8 +465,6 @@ class MoveCursor(FormattedCommand):
 		
 		if(originalCodeLine[:11] != "moveCursor(" or originalCodeLine[-1:] != ")"):
 			raise Exception("Invalid syntax for Move Cursor method.")
-
-		self.originalCodeLine = originalCodeLine
 
 	def solve(self):
 		vals = self.argumentSyntax(self.originalCodeLine[11:-1], 2)
@@ -492,25 +481,52 @@ class MoveCursor(FormattedCommand):
 class If(FormattedCommand):
 
 	def __init__(self, originalCodeLine:str):
-		super().__init__("If")
+		super().__init__("If", originalCodeLine)
 		self.checkSyntax(originalCodeLine)
+		self.comparisonAnswer = None
 
 	def checkSyntax(self, originalCodeLine:str):
-		pass
+		if(originalCodeLine[:3] != "if(" or originalCodeLine[-2:] != "):"):
+			raise Exception("Invalid syntax for If statement.")
+
+	def solve(self):
+		comparisonEquation = self.originalCodeLine[3:-2]
+		comparisonEquation = self.replaceVarsWithVals(comparisonEquation)
+		self.comparisonAnswer = cs.solveEquation(comparisonEquation)
+
+	def print(self):
+		if(self.comparisonAnswer == None):
+			print("If (Unsolved): " + self.originalCodeLine)
+		else:
+			print("If: " + str(self.comparisonAnswer))
 
 class While(FormattedCommand):
 
 	def __init__(self, originalCodeLine:str):
-		super().__init__("While")
+		super().__init__("While", originalCodeLine)
 		self.checkSyntax(originalCodeLine)
+		self.comparisonAnswer = None
 
 	def checkSyntax(self, originalCodeLine:str):
-		pass
+		if(originalCodeLine[:6] != "while(" or originalCodeLine[-2:] != "):"):
+			raise Exception("Invalid syntax for While loop.")
+
+	def solve(self):
+		comparisonEquation = self.originalCodeLine[6:-2]
+		comparisonEquation = self.replaceVarsWithVals(comparisonEquation)
+		self.comparisonAnswer = cs.solveEquation(comparisonEquation)
+
+	def print(self):
+		if(self.comparisonAnswer == None):
+			print("While (Unsolved): " + self.originalCodeLine)
+		else:
+			print("While: " + str(self.comparisonAnswer))
+
 
 class For(FormattedCommand):
 
 	def __init__(self, originalCodeLine:str):
-		super().__init__("For")
+		super().__init__("For", originalCodeLine)
 		self.checkSyntax(originalCodeLine)
 
 	def checkSyntax(self, originalCodeLine:str):
