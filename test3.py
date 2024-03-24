@@ -1,8 +1,3 @@
-
-def show_help():
-    help_text = "To create a hotkey:\n1. Choose a key combination.\n2. Assign an action to the combination.\n3. Save your settings."
-    messagebox.showinfo("Help - Create Hotkeys", help_text)
-
 import tkinter as tk
 from tkinter import ttk, messagebox, font
 import json
@@ -40,6 +35,9 @@ def signup(username, password, users):
     if username in users:
         messagebox.showerror("Signup Failed", "Username already exists.")
         return False
+    if password != confirm_password_entry.get():
+        messagebox.showerror("Signup Failed", "Passwords do not match.")
+        return False
     users[username] = password
     save_users(users)
     messagebox.showinfo("Signup Success", "You have successfully signed up.")
@@ -51,7 +49,6 @@ def undo_action():
         messagebox.showinfo("Undo", "No actions to undo.")
         return
     action = undo_stack.pop()
-    # Placeholder for undo action logic
     redo_stack.append(action)  # Prepare for potential redo
     messagebox.showinfo("Undo", "Action undone.")
 
@@ -61,7 +58,6 @@ def redo_action():
         messagebox.showinfo("Redo", "No actions to redo.")
         return
     action = redo_stack.pop()
-    # Placeholder for redo action logic
     undo_stack.append(action)  # Allow this action to be undone again
     messagebox.showinfo("Redo", "Action redone.")
 
@@ -78,7 +74,7 @@ button_color = '#0066cc'  # Blue buttons
 input_font = font.Font(family="Arial", size=12)
 label_font = font.Font(family="Arial", size=14, weight='bold')
 root.configure(bg=bg_color)
-root.geometry("400x300")
+root.geometry("400x350")  # Adjusted height to accommodate new elements
 
 # Function to switch to login frame
 def show_login_frame():
@@ -89,13 +85,6 @@ def show_login_frame():
 def show_signup_frame():
     login_frame.pack_forget()
     signup_frame.pack(fill="both", expand=True)
-
-# Function to get the currently focused widget and perform actions
-def get_focused_input_field():
-    focused_widget = root.focus_get()
-    if focused_widget in [username_entry, password_entry, new_username_entry, new_password_entry]:
-        return focused_widget
-    return None
 
 # Function to copy text from the focused input field to the clipboard
 def copy_text():
@@ -127,44 +116,54 @@ def paste_text():
         except tk.TclError:
             messagebox.showwarning('Paste', 'Nothing to paste.')
 
+# Function to show help about creating hotkeys
+def show_help():
+    help_text = "To create a hotkey:\\n1. Choose a key combination.\\n2. Assign an action to the combination.\\n3. Save your settings."
+    messagebox.showinfo("Help - Create Hotkeys", help_text)
 
+# Function to get the currently focused widget
+def get_focused_input_field():
+    focused_widget = root.focus_get()
+    if focused_widget in [username_entry, password_entry, new_username_entry, new_password_entry, confirm_password_entry]:
+        return focused_widget
+    return None
+
+# Clear Fields functions
+def clear_login_fields():
+    username_entry.delete(0, tk.END)
+    password_entry.delete(0, tk.END)
+
+
+# Clear Fields functions
+def clear_login_fields():
+    username_entry.delete(0, tk.END)
+    password_entry.delete(0, tk.END)
+
+def clear_signup_fields():
+    new_username_entry.delete(0, tk.END)
+    new_password_entry.delete(0, tk.END)
+    confirm_password_entry.delete(0, tk.END)
 
 # Update the GUI to include Undo and Redo
 def create_menu():
     main_menu = tk.Menu(root)
     root.config(menu=main_menu)
-    
+
     file_menu = tk.Menu(main_menu, tearoff=0)
     main_menu.add_cascade(label="File", menu=file_menu)
     file_menu.add_command(label="Undo", command=undo_action)
     file_menu.add_command(label="Redo", command=redo_action)
 
-    help_menu = tk.Menu(main_menu, tearoff=0)
-    main_menu.add_cascade(label="Help", menu=help_menu)
-    
-def create_menu():
-    main_menu = tk.Menu(root)
-    root.config(menu=main_menu)
-    
-    file_menu = tk.Menu(main_menu, tearoff=0)
-    main_menu.add_cascade(label="File", menu=file_menu)
-    file_menu.add_command(label="Undo", command=undo_action)
-    file_menu.add_command(label="Redo", command=redo_action)
-
-    help_menu = tk.Menu(main_menu, tearoff=0)
-    help_menu.add_command(label="How to create hotkeys", command=show_help)
-    main_menu.add_cascade(label="Help", menu=help_menu)
-
-
-
-# Adding Edit menu for cut, copy, paste functionalities
     edit_menu = tk.Menu(main_menu, tearoff=0)
     edit_menu.add_command(label="Cut", command=cut_text)
     edit_menu.add_command(label="Copy", command=copy_text)
     edit_menu.add_command(label="Paste", command=paste_text)
     main_menu.add_cascade(label="Edit", menu=edit_menu)
 
-# Initialize UI components
+    help_menu = tk.Menu(main_menu, tearoff=0)
+    help_menu.add_command(label="How to create hotkeys", command=show_help)
+    main_menu.add_cascade(label="Help", menu=help_menu)
+
 create_menu()
 
 # Frames for Login and Signup
@@ -182,8 +181,15 @@ password_label.pack(pady=(10, 0))
 password_entry = ttk.Entry(login_frame, font=input_font, show="*")
 password_entry.pack()
 
+remember_me_var = tk.IntVar()
+remember_me_check = ttk.Checkbutton(login_frame, text="Remember Me", variable=remember_me_var, onvalue=1, offvalue=0)
+remember_me_check.pack(pady=5)
+
+clear_fields_button_login = ttk.Button(login_frame, text="Clear Fields", command=clear_login_fields)
+clear_fields_button_login.pack(pady=5)
+
 login_button = ttk.Button(login_frame, text="Login", command=lambda: login(username_entry.get(), password_entry.get(), load_users()))
-login_button.pack(pady=20)
+login_button.pack(pady=10)
 
 to_signup_button = ttk.Button(login_frame, text="Create Account", command=show_signup_frame)
 to_signup_button.pack()
@@ -199,8 +205,16 @@ new_password_label.pack(pady=(10, 0))
 new_password_entry = ttk.Entry(signup_frame, font=input_font, show="*")
 new_password_entry.pack()
 
+confirm_password_label = ttk.Label(signup_frame, text="Confirm Password:", font=input_font)
+confirm_password_label.pack(pady=(5, 0))
+confirm_password_entry = ttk.Entry(signup_frame, font=input_font, show="*")
+confirm_password_entry.pack()
+
+clear_fields_button_signup = ttk.Button(signup_frame, text="Clear Fields", command=clear_signup_fields)
+clear_fields_button_signup.pack(pady=5)
+
 signup_button = ttk.Button(signup_frame, text="Signup", command=lambda: signup(new_username_entry.get(), new_password_entry.get(), load_users()))
-signup_button.pack(pady=20)
+signup_button.pack(pady=10)
 
 to_login_button = ttk.Button(signup_frame, text="Already have an account?", command=show_login_frame)
 to_login_button.pack()
@@ -210,7 +224,5 @@ show_login_frame()
 
 # Start the application
 root.mainloop()
-
-
 
 
