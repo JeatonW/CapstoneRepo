@@ -11,9 +11,9 @@ class CommandTree:
 
 		for i in self.head.children:
 
-			if(len(keys) == 0):
+			if(len(self.keys) == 0):
 				i.data.solve()
-				
+
 			listOfHotKeys.append(i.data.keys)
 
 		return listOfHotKeys
