@@ -16,3 +16,12 @@ T + E + S::
 	highlight(mathVar1)
 	startCursor(mathVar1/mathVar2, 10+2)
 	moveCursor(mathVar4, 9)
+
+	if(increment == 3):
+
+		ifVar1 = 10
+		ifvar2 = 1 + 3
+
+	index = 0
+	while(index < 5):
+		index = index + 1

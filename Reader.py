@@ -1,5 +1,29 @@
 import CommandFormatter as CF
 
+class CommandTree:
+
+	def __init__(self, head):
+		self.head = head
+
+	def getHKList(self):
+
+		listOfHotKeys = []
+
+		for i in self.head.children:
+
+			if(len(i.data.keys) == 0):
+				i.data.solve()
+
+			listOfHotKeys.append(i.data.keys)
+
+		return listOfHotKeys
+
+	def solve(self):
+		self.head.solve()
+
+	def solveAndPrint(self):
+		self.head.solveAndPrint()
+
 class TreeNode:
 
 	#every node contains data (command), the line that the original command in the text file was on, a list of children, and a parent
@@ -48,15 +72,49 @@ class TreeNode:
 	def solveAndPrintHelper(self, tabs):
 		for i in range(0, tabs):
 			print("   ", end="")
-		self.data.solve()
+
+		try:
+			self.data.solve()
+		except Exception as e:
+			print("\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine))
+			print(e)
+			exit()
 		self.data.print()
-		for i in self.children:
-			i.solveAndPrintHelper(tabs + 1)
+
+
+		if(self.data.comType == "If"):
+			if(self.data.comparisonAnswer == "1"):
+				for i in self.children:
+					i.solveAndPrintHelper(tabs + 1)
+		elif(self.data.comType == "While"):
+			while(self.data.comparisonAnswer == "1"):
+
+				for i in self.children:
+
+					i.solveAndPrintHelper(tabs + 1)
+					for i in range(0, tabs):
+						print("   ", end="")
+					self.data.solve()
+					self.data.print()
+		else:
+			for i in self.children:
+				i.solveAndPrintHelper(tabs + 1)
 
 	def solve(self):
 		self.data.solve()
-		for i in self.children:
-			i.solve()
+
+		if(self.data.comType == "If"):
+			if(self.data.comparisonAnswer == "1"):
+				for i in self.children:
+					i.solve()
+		elif(self.data.comType == "While"):
+			while(self.data.comparisonAnswer == "1"):
+				for i in self.children:
+					i.solve()
+					self.data.solve()
+		else:
+			for i in self.children:
+				i.solve()
 
 	#get a node using its index in preorder traversal
 	def getNode(self, num:int):
@@ -140,7 +198,7 @@ def formatCommand(command:str):
 	elif("if(" == command[:3]):
 		return CF.If(command)
 	elif(":" == command[-1:]):
-		return CF.Language()
+		return CF.Language(command)
 	elif("paste(" == command[:6]):
 		return CF.Paste(command)
 	elif("highlight(" == command[:10]):
@@ -191,12 +249,19 @@ def convertLinesToTuples(fileName:list) -> list:
 		#delete empty lines
 		if(command != ""):
 
-			formattedCommand = formatCommand(command)
+			try:
+				formattedCommand = formatCommand(command)
+			except Exception as e:
+				print("\nLine " + str(lineIndex+1) + ": " + command)
+				print(e)
+				exit()
+
+
 			#print(formattedCommand)
 			#print("TEST")
 			#formattedCommand.print()
 
-			tabCommandTuple = (tabs, formatCommand(command), lineIndex)
+			tabCommandTuple = (tabs, formattedCommand, lineIndex)
 			commands.append(tabCommandTuple)
 
 		#go to next line
@@ -223,7 +288,7 @@ def fillNode(node:TreeNode, commands:list, commandIndex:int, tabs:int):
 		commandIndex = commandIndex + 1
 
 #perform all necessary methods to create a command tree from a file name
-def createCommandTree(fileName:str) -> TreeNode:
+def createCommandTree(fileName:str) -> CommandTree:
 
 	#read a script line by line, convert to an array of commands. a command is a tuple: (tabs:int, code:str, line:int)
 	tupleArray = convertLinesToTuples(fileName)
@@ -234,8 +299,7 @@ def createCommandTree(fileName:str) -> TreeNode:
 	#fill this tree using the commands. the number of tabs on a tree represent what level it is on the tree.
 	fillNode(headNode, tupleArray, 0, -1)
 
-	return headNode
+	return CommandTree(headNode)
 
-
-head = createCommandTree(input("Input file name: "))
-head.solveAndPrint()
+#ct = createCommandTree(input("Input file name: "))
+#print(ct.getHKList())

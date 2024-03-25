@@ -1,5 +1,6 @@
 from pynput import keyboard
 import pynput
+
 #function used to format the keys to send to the Hotkeyfunction of 
 def formatKeys(hotkeys):
     KeysToBeFormated = ["shift","ctrl_l","alt_l","ctrl_r","alt_r"]

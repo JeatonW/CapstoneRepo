@@ -92,7 +92,7 @@ def splitToItems(string:str) -> LinkedList:
 	return subStrings
 
 #combines all substrings from the linked list into one string
-def combineItems(subStrings:list) -> str:
+def combineItems(subStrings:LinkedList) -> str:
 
 	combinedString = ""
 
