@@ -271,6 +271,9 @@ class HotKey(FormattedCommand):
 
 	def solve(self):
 
+		if(len(keys) != 0):
+			return
+
 		#remove colons
 		eq = self.originalCodeLine[:-2]
 

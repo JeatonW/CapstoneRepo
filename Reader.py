@@ -10,7 +10,10 @@ class CommandTree:
 		listOfHotKeys = []
 
 		for i in self.head.children:
-			i.data.solve()
+
+			if(len(keys) == 0):
+				i.data.solve()
+				
 			listOfHotKeys.append(i.data.keys)
 
 		return listOfHotKeys
@@ -297,7 +300,6 @@ def createCommandTree(fileName:str) -> CommandTree:
 	fillNode(headNode, tupleArray, 0, -1)
 
 	return CommandTree(headNode)
-
 
 #ct = createCommandTree(input("Input file name: "))
 #print(ct.getHKList())
