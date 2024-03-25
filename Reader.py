@@ -1,5 +1,26 @@
 import CommandFormatter as CF
 
+class CommandTree:
+
+	def __init__(self, head):
+		self.head = head
+
+	def getHKList(self):
+
+		listOfHotKeys = []
+
+		for i in self.head.children:
+			i.data.solve()
+			listOfHotKeys.append(i.data.keys)
+
+		return listOfHotKeys
+
+	def solve(self):
+		self.head.solve()
+
+	def solveAndPrint(self):
+		self.head.solveAndPrint()
+
 class TreeNode:
 
 	#every node contains data (command), the line that the original command in the text file was on, a list of children, and a parent
@@ -264,7 +285,7 @@ def fillNode(node:TreeNode, commands:list, commandIndex:int, tabs:int):
 		commandIndex = commandIndex + 1
 
 #perform all necessary methods to create a command tree from a file name
-def createCommandTree(fileName:str) -> TreeNode:
+def createCommandTree(fileName:str) -> CommandTree:
 
 	#read a script line by line, convert to an array of commands. a command is a tuple: (tabs:int, code:str, line:int)
 	tupleArray = convertLinesToTuples(fileName)
@@ -275,8 +296,8 @@ def createCommandTree(fileName:str) -> TreeNode:
 	#fill this tree using the commands. the number of tabs on a tree represent what level it is on the tree.
 	fillNode(headNode, tupleArray, 0, -1)
 
-	return headNode
+	return CommandTree(headNode)
 
 
-#head = createCommandTree(input("Input file name: "))
-#head.solveAndPrint()
+#ct = createCommandTree(input("Input file name: "))
+#print(ct.getHKList())
