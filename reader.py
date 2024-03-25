@@ -174,7 +174,7 @@ def formatCommand(command:str):
 	elif("if(" == command[:3]):
 		return CF.If(command)
 	elif(":" == command[-1:]):
-		return CF.Language()
+		return CF.Language(command)
 	elif("paste(" == command[:6]):
 		return CF.Paste(command)
 	elif("highlight(" == command[:10]):
@@ -278,5 +278,5 @@ def createCommandTree(fileName:str) -> TreeNode:
 	return headNode
 
 
-head = createCommandTree(input("Input file name: "))
-head.solveAndPrint()
+#head = createCommandTree(input("Input file name: "))
+#head.solveAndPrint()
