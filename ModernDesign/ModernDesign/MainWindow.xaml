@@ -1,0 +1,102 @@
+﻿<Window x:Class="ModernDesign.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ModernDesign"
+        xmlns:viewModel ="clr-namespace:ModernDesign.MVVM.ViewModel"
+        mc:Ignorable="d"
+        Height="600" 
+        Width="920"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        AllowsTransparency="True">
+    
+    <Window.DataContext>
+        <viewModel:MainViewModel/>
+    </Window.DataContext>
+        
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Border Background="#272537" MouseDown="DragWithHeader">
+            <Grid  Grid.Row="0" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="460"/>
+                    <ColumnDefinition Width="460"/>
+
+                </Grid.ColumnDefinitions>
+
+                <Grid HorizontalAlignment="Left">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="45"/>
+                        <ColumnDefinition Width="15*"/>
+                        <ColumnDefinition Width="45"/>
+                        <ColumnDefinition Width="45*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" Text="Hotkeys" FontSize="32" FontFamily="Segoe UI" Foreground="white" Grid.ColumnSpan="2" Margin="38,0,0,0" Width="121"/>
+                    <Image  Source="C:\Users\joshu\source\repos\ModernDesign\ModernDesign\Images\I.png"/>
+                    <Image  Source="C:\Users\joshu\source\repos\ModernDesign\ModernDesign\Images\D.png" Grid.ColumnSpan="2" Margin="41,0,4,0"/>
+                    <Image  Source="C:\Users\joshu\source\repos\ModernDesign\ModernDesign\Images\E.png" Grid.ColumnSpan="2" Margin="37,0,7,0" Grid.Column="1"/>
+                </Grid>
+
+                <Grid Grid.Column="2" HorizontalAlignment="Right">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="45"/>
+                        <ColumnDefinition Width="45"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="1" FontSize="28" Click="CloseButton_Click" Name="CloseButton" Content="X" Width="45" Background="Transparent" BorderBrush="{x:Null}" />
+
+
+                    <Button Grid.Column="0" FontSize="50" Click="Minimize_Click" Name="MinimizeButton" Background="Transparent" BorderBrush="{x:Null}">
+                        <TextBlock Grid.Column="0" Width="45 " Background="Transparent" Text="&#x0304;" TextAlignment="Center" TextWrapping="Wrap"/>
+                    </Button>
+
+                </Grid>
+            </Grid>
+        </Border>
+        <Border Background="#FF2D2D30" Grid.Row="1">
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            
+               
+            <StackPanel Grid.Column="0">
+                    <RadioButton Content="Home"
+                                 Height="75"
+                                 Foreground="White" 
+                                 FontSize="38"
+                                 Style="{StaticResource MenuButtonTheme}"
+                                 IsChecked="True"
+                                 Command="{Binding HomeViewCommand}"/>
+                    <RadioButton Content="CreateScript"
+                                 Height="75"
+                                 Foreground="White" 
+                                 FontSize="38"
+                                 Style="{StaticResource MenuButtonTheme}"
+                                 Command="{Binding CreateScripCommand}"/>
+                    <RadioButton Content="Load Script"
+                                 Height="75"
+                                 Foreground="White" 
+                                 FontSize="38"
+                                 Style="{StaticResource MenuButtonTheme}"/>     
+
+
+            </StackPanel>
+                <ContentControl Grid.Column="1"
+                                Margin="10"
+                                Content="{Binding CurrentView}"
+                                VerticalAlignment="Top">
+                    
+                </ContentControl>       
+            <!-- this is where the main view gets swapped out-->
+             
+        </Grid>
+        </Border>
+    </Grid>
+</Window>

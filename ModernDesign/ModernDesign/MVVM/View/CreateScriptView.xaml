@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="ModernDesign.MVVM.View.CreateScriptView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ModernDesign.MVVM.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="550" d:DesignWidth="650"
+             Background="Transparent" >
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="480"/>
+                <RowDefinition Height="90 "/>
+            </Grid.RowDefinitions>
+                
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="650"/>
+                
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Row="0" Height="480" x:Name="ScriptTextBox" AcceptsReturn="True" AcceptsTab="True"
+             HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+             FontFamily="Consolas" FontSize="14"/>
+
+            <Border Background="#272537" Grid.Row="1" VerticalAlignment="Top" >
+                <Border.Clip>
+                    <RectangleGeometry RadiusX="10"
+                                       RadiusY="10"
+                                       Rect="0,0,650,40"/>
+                </Border.Clip>
+                <Grid HorizontalAlignment="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="45"/>
+                    <ColumnDefinition Width="45*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                
+                <Button Grid.Column="0" VerticalAlignment="Top" Height="40" Width="45" Content="Save" FontSize="20" Click="SaveButton_Click"/>
+                <Button Grid.Column="1" Content="Check Script" FontSize="20" Click="CheckBox"/>
+                </Grid>
+            </Border> 
+        </Grid>
+    </Grid>
+</UserControl>
