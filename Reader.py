@@ -83,9 +83,9 @@ class TreeNode:
 		try:
 			self.data.solve()
 		except Exception as e:
-			error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + e
+			error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + str(e)
 			print(error)
-			return
+			exit()
 		self.data.print()
 
 		#perform if logic if current line is an if statement (solve and print children if necessary)
@@ -111,9 +111,9 @@ class TreeNode:
 					self.data.solve()
 					self.data.print()
 				except Exception as e:
-					error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + e
+					error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + str(e)
 					print(error)
-					return
+					exit()
 
 		#perform for logic if current line is a for loop (solve and print children if necessary)
 		elif(self.data.comType == "For"):
@@ -130,9 +130,9 @@ class TreeNode:
 					self.data.solve()
 					self.data.print()
 				except Exception as e:
-					error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + e
+					error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + str(e)
 					print(error)
-					return
+					exit()
 
 		#normal one-lined logic (declaration, paste, highlight, etc)
 		else:
@@ -146,9 +146,9 @@ class TreeNode:
 		try:
 			self.data.solve()
 		except Exception as e:
-			error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + e
+			error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + str(e)
 			print(error)
-			return
+			exit()
 
 		#perform if logic if current line is an if statement (solve and print children if necessary)
 		if(self.data.comType == "If"):
@@ -170,9 +170,9 @@ class TreeNode:
 				try:
 					self.data.solve()
 				except Exception as e:
-					error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + e
+					error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + str(e)
 					print(error)
-					return
+					exit()
 
 		#perform for logic if current line is a for loop (solve and print children if necessary)
 		elif(self.data.comType == "For"):
@@ -186,9 +186,9 @@ class TreeNode:
 				try:
 					self.data.solve()
 				except Exception as e:
-					error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + e
+					error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + str(e)
 					print(error)
-					return
+					exit()
 
 		#solve normal one-lined logic (declaration, paste, highlight, etc)
 		else:
@@ -332,9 +332,9 @@ def convertLinesToTuples(fileName:list) -> list:
 			try:
 				formattedCommand = formatCommand(command)
 			except Exception as e:
-				error = "\nLine " + str(lineIndex+1) + ": " + command + "\n" + e
+				error = "\nLine " + str(lineIndex+1) + ": " + command + "\n" + str(e)
 				print(error)
-				return None
+				exit()
 
 			tabCommandTuple = (tabs, formattedCommand, lineIndex)
 			commands.append(tabCommandTuple)
