@@ -7,7 +7,29 @@ class VariableDictionary:
 		self.varDict["true"] = 1
 
 	def getKeyList(self) -> list:
-		return list(self.varDict.keys())
+
+		#sort list from longest var to shortest var
+		swapMade = True
+		keyList = list(self.varDict.keys())
+
+		#keep sorting until a pass is made without swapping
+		while(swapMade == True):
+			swapMade = False
+
+			#evaluate every element
+			i = 0
+			while(i < len(keyList) - 1):
+
+				#if current element is shorter than next, swap
+				if(len(keyList[i]) < len(keyList[i+1])):
+					temp = keyList[i]
+					keyList[i] = keyList[i+1]
+					keyList[i+1] = temp
+					swapMade = True
+				i = i + 1
+
+		#return list sorted longest to shortest
+		return keyList
 
 	def set(self, variable:str, value):
 		self.varDict[variable] = value

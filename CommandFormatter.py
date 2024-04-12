@@ -5,15 +5,19 @@ from VariableDictionary import VariableDictionary as VD
 
 varDict = VD()
 
+#a formatted command is a line of code taken from the script that is checked for syntax errors and formatted into useable variables
 class FormattedCommand:
 
+	#every formatted command has a command type (declaration, if, while, etc) and the original code line text
 	def __init__(self, comType:str, originalCodeLine:str):
 		self.comType = comType
 		self.originalCodeLine = originalCodeLine
 
+	#a solve function is required in children classes
 	def solve(self):
 		pass
 
+	#if no print function is given in the child class, only the command type will be printed
 	def print(self):
 		print(self.comType)
 
@@ -145,7 +149,7 @@ class FormattedCommand:
 	def replaceNth(self, s, sub, repl, n):
 		find = s.find(sub)
 
-		#ff find is not -1 we have found at least one match for the substring
+		#if find is not -1 we have found at least one match for the substring
 		i = find != -1
 
 		#loop until match found
@@ -251,11 +255,14 @@ class FormattedCommand:
 
 		return vals
 
+#this is always the head of the tree. it only exists so that all hotkeys can be accessed from one tree
+#instead of having a separate tree for each hotkey
 class ScriptBegin(FormattedCommand):
 
 	def __init__(self):
 		super().__init__("Script Begin", "None")
 
+#hotkeys are always children of the head. they indicate which keys should be pressed for a script to activate
 class HotKey(FormattedCommand):
 
 	def __init__(self, originalCodeLine:str):
@@ -271,6 +278,8 @@ class HotKey(FormattedCommand):
 
 	def solve(self):
 
+		#hotkeys should only be solved once. if keys already
+		#exist then the hotkey has already been solved
 		if(len(self.keys) != 0):
 			return
 
@@ -280,20 +289,22 @@ class HotKey(FormattedCommand):
 		#remove spaces
 		eq = eq.replace(" ", "")
 
+		#split the string in between each individual key
 		keyList = eq.split("+")
 
+		#make sure each key is valid, and if it is, add it to the list of keys
 		for k in keyList:
 			if(self.checkKey(k)):
 				self.keys.append(k)
 			else:
 				raise Exception("Invalid key: " + k)
 
+	#print the list of keys
 	def print(self):
 		if(len(self.keys) == 0):
 			print("HotKey (Unsolved): " + self.originalCodeLine)
 		else:
 			print("HotKey: [", end="")
-
 			index = 0
 			for k in self.keys:
 				if(index != len(self.keys) - 1):
@@ -401,7 +412,7 @@ class Paste(FormattedCommand):
 		if(self.string == None):
 			print("Paste (Unsolved): " + self.originalCodeLine)
 		else:
-			print("Paste: " + self.string)
+			print("Paste: " + str(self.string))
 
 class Highlight(FormattedCommand):
 
@@ -531,9 +542,21 @@ class For(FormattedCommand):
 	def __init__(self, originalCodeLine:str):
 		super().__init__("For", originalCodeLine)
 		self.checkSyntax(originalCodeLine)
+		self.loopCount = None
 
 	def checkSyntax(self, originalCodeLine:str):
-		pass
+		if(originalCodeLine[:4] != "for(" or originalCodeLine[-2:] != "):"):
+			raise Exception("Invalid syntax for For loop.")
+
+	def solve(self):
+		val = self.argumentSyntax(self.originalCodeLine[4:-2], 1)[0]
+		self.loopCount = es.solveEquation(val)
+
+	def print(self):
+		if(self.loopCount == None):
+			print("For (Unsolved): " + str(self.originalCodeLine))
+		else:
+			print("For: " + str(self.loopCount))
 
 # print()
 # varTest = Declaration("var1 = 4*4/8")
@@ -575,4 +598,3 @@ class For(FormattedCommand):
 # mcTest.solve()
 # mcTest.print()
 # print()
-

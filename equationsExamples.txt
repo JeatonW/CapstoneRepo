@@ -22,6 +22,18 @@ T + E + S::
 		ifVar1 = 10
 		ifvar2 = 1 + 3
 
+		if(increment == 3 and 4 == 4):
+
+			aVar = 1
+			bVar = 2
+
 	index = 0
 	while(index < 5):
 		index = index + 1
+		test = 4
+		testAgain = 3
+
+	iFor = 0
+	for(3):
+		iFor = iFor + 1
+		paste(iFor)

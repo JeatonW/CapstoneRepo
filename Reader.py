@@ -1,5 +1,7 @@
 import CommandFormatter as CF
 
+error = None
+
 class CommandTree:
 
 	def __init__(self, head):
@@ -48,6 +50,7 @@ class TreeNode:
 		self.children.append(child)
 		child.setParent(self)
 
+	#prints out the tree in the form of tuples (lines, code, tabs)
 	def printTuples(self):
 		self.printTuplesHelper(0)
 	def printTuplesHelper(self, tabs):
@@ -67,54 +70,130 @@ class TreeNode:
 		for i in self.children:
 			i.printTreeHelper(tabs + 1)
 
+	#solves and prints the entire tree 
 	def solveAndPrint(self):
 		self.solveAndPrintHelper(0)
 	def solveAndPrintHelper(self, tabs):
+
+		#print the number of tabs before printing the code line
 		for i in range(0, tabs):
 			print("   ", end="")
 
+		#try to solve the current line. save and print the error if there is one
 		try:
 			self.data.solve()
 		except Exception as e:
-			print("\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine))
-			print(e)
-			exit()
+			error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + e
+			print(error)
+			return
 		self.data.print()
 
-
+		#perform if logic if current line is an if statement (solve and print children if necessary)
 		if(self.data.comType == "If"):
 			if(self.data.comparisonAnswer == "1"):
+
+				#solve and print children
 				for i in self.children:
 					i.solveAndPrintHelper(tabs + 1)
+
+		#perform while logic if current line is a while loop (solve and print children if necessary)
 		elif(self.data.comType == "While"):
 			while(self.data.comparisonAnswer == "1"):
 
+				#solve and print children
 				for i in self.children:
-
 					i.solveAndPrintHelper(tabs + 1)
+
+				#try to solve and print the while loop again for each child; values have changed. store and print error if there is one
+				try:
 					for i in range(0, tabs):
 						print("   ", end="")
 					self.data.solve()
 					self.data.print()
+				except Exception as e:
+					error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + e
+					print(error)
+					return
+
+		#perform for logic if current line is a for loop (solve and print children if necessary)
+		elif(self.data.comType == "For"):
+			for i in range(0, int(self.data.loopCount)):
+
+				#solve and print children
+				for i in self.children:
+					i.solveAndPrintHelper(tabs + 1)
+
+				#try to solve and print the for loop again for each child; values have changed. store and print error if there is one
+				try:
+					for i in range(0, tabs):
+						print("   ", end="")
+					self.data.solve()
+					self.data.print()
+				except Exception as e:
+					error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + e
+					print(error)
+					return
+
+		#normal one-lined logic (declaration, paste, highlight, etc)
 		else:
 			for i in self.children:
 				i.solveAndPrintHelper(tabs + 1)
 
+	#solves the entire tree
 	def solve(self):
-		self.data.solve()
 
+		#try to solve the current line. save and print the error if there is one
+		try:
+			self.data.solve()
+		except Exception as e:
+			error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + e
+			print(error)
+			return
+
+		#perform if logic if current line is an if statement (solve and print children if necessary)
 		if(self.data.comType == "If"):
 			if(self.data.comparisonAnswer == "1"):
+
+				#solve children
 				for i in self.children:
 					i.solve()
+
+		#perform while logic if current line is a while loop (solve and print children if necessary)
 		elif(self.data.comType == "While"):
 			while(self.data.comparisonAnswer == "1"):
+
+				#solve children
 				for i in self.children:
 					i.solve()
+
+				#try to solve the while loop again for each child; values have changed. store and print error if there is one
+				try:
 					self.data.solve()
+				except Exception as e:
+					error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + e
+					print(error)
+					return
+
+		#perform for logic if current line is a for loop (solve and print children if necessary)
+		elif(self.data.comType == "For"):
+			for i in range(0, int(self.data.loopCount)):
+
+				#solve children
+				for i in self.children:
+					i.solve()
+
+				#try to solve the for loop again for each child; values have changed. store and print error if there is one
+				try:
+					self.data.solve()
+				except Exception as e:
+					error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + e
+					print(error)
+					return
+
+		#solve normal one-lined logic (declaration, paste, highlight, etc)
 		else:
 			for i in self.children:
-				i.solve()
+				i.solve(tabs + 1)
 
 	#get a node using its index in preorder traversal
 	def getNode(self, num:int):
@@ -249,17 +328,13 @@ def convertLinesToTuples(fileName:list) -> list:
 		#delete empty lines
 		if(command != ""):
 
+			#try to format the command. if there is an error, save it and print it
 			try:
 				formattedCommand = formatCommand(command)
 			except Exception as e:
-				print("\nLine " + str(lineIndex+1) + ": " + command)
-				print(e)
-				exit()
-
-
-			#print(formattedCommand)
-			#print("TEST")
-			#formattedCommand.print()
+				error = "\nLine " + str(lineIndex+1) + ": " + command + "\n" + e
+				print(error)
+				return None
 
 			tabCommandTuple = (tabs, formattedCommand, lineIndex)
 			commands.append(tabCommandTuple)
@@ -301,5 +376,5 @@ def createCommandTree(fileName:str) -> CommandTree:
 
 	return CommandTree(headNode)
 
-#ct = createCommandTree(input("Input file name: "))
-#print(ct.getHKList())
+ct = createCommandTree(input("Input file name: "))
+ct.solveAndPrint()
