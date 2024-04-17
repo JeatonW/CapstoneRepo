@@ -1,6 +1,8 @@
 from pynput import keyboard
 import pynput
+import Reader
 
+#this program is responsible for just blocking the spevified windows keys and allowing the combo on keys
 #function used to format the keys to send to the Hotkeyfunction of 
 def formatKeys(hotkeys):
     KeysToBeFormated = ["shift","ctrl_l","alt_l","ctrl_r","alt_r"]
@@ -40,7 +42,24 @@ def HotkeyAction(keys):
         l.join()
 
 
-    '''
+
+file = "C:/Users/joshu/Desktop/git/CapstoneRepo/Test Hotkey Files/equationsExamples.txt"
+
+
+tree = Reader.createCommandTree(file)   
+HKList = tree.getHKList()
+print(HKList)
+keys = formatKeys(HKList)
+print(repr(keys))
+HotkeyAction(keys)
+
+
+
+
+
+
+#ignore below
+'''
     def keyboard_listener():
         global listener
         def on_press(key):
@@ -74,4 +93,4 @@ def HotkeyAction(keys):
 
     with listener as ml:
         ml.join() 
-    '''
+'''
