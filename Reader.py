@@ -71,9 +71,11 @@ class TreeNode:
 			i.printTreeHelper(tabs + 1)
 
 	#solves and prints the entire tree 
-	def solveAndPrint(self):
-		self.solveAndPrintHelper(0)
-	def solveAndPrintHelper(self, tabs):
+	def solveAndPrint(self) -> list:
+		return self.solveAndPrintHelper(0)
+	def solveAndPrintHelper(self, tabs) -> list:
+
+		executables = []
 
 		#print the number of tabs before printing the code line
 		for i in range(0, tabs):
@@ -139,8 +141,25 @@ class TreeNode:
 			for i in self.children:
 				i.solveAndPrintHelper(tabs + 1)
 
+		if(self.data.comType == "Paste"):
+			tupleNameAndVar = ("Paste", str(self.data.string))
+			executables.append(tupleNameAndVar)
+		if(self.data.comType == "Highlight"):
+			tupleNameAndVar = ("Highlight", self.data.distance)
+			executables.append(tupleNameAndVar)
+		if(self.data.comType == "Start Cursor"):
+			tupleNameAndVar = ("Start Cursor", self.data.startX, self.data.startY)
+			executables.append(tupleNameAndVar)
+		if(self.data.comType == "Move Cursor"):
+			tupleNameAndVar = ("Move Cursor", self.data.moveX, self.data.moveY)
+			executables.append(tupleNameAndVar)
+
+		return executables
+
 	#solves the entire tree
-	def solve(self):
+	def solve(self) -> list:
+
+		executables = []
 
 		#try to solve the current line. save and print the error if there is one
 		try:
@@ -194,6 +213,21 @@ class TreeNode:
 		else:
 			for i in self.children:
 				i.solve(tabs + 1)
+
+		if(self.data.comType == "Paste"):
+			tupleNameAndVar = ("Paste", str(self.data.string))
+			executables.append(tupleNameAndVar)
+		if(self.data.comType == "Highlight"):
+			tupleNameAndVar = ("Highlight", self.data.distance)
+			executables.append(tupleNameAndVar)
+		if(self.data.comType == "Start Cursor"):
+			tupleNameAndVar = ("Start Cursor", self.data.startX, self.data.startY)
+			executables.append(tupleNameAndVar)
+		if(self.data.comType == "Move Cursor"):
+			tupleNameAndVar = ("Move Cursor", self.data.moveX, self.data.moveY)
+			executables.append(tupleNameAndVar)
+
+		return executables
 
 	#get a node using its index in preorder traversal
 	def getNode(self, num:int):
