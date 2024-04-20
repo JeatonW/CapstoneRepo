@@ -410,5 +410,5 @@ def createCommandTree(fileName:str) -> CommandTree:
 
 	return CommandTree(headNode)
 
-ct = createCommandTree(input("Input file name: "))
+#ct = createCommandTree(input("Input file name: "))
 ct.solve()

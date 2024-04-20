@@ -44,7 +44,7 @@ def HotkeyAction(keys):
 
 
 #file = "C:/Users/joshu/Desktop/git/CapstoneRepo/Test Hotkey Files/equationsExamples.txt"
-file = "C:/Users/joshu/OneDrive/Documents/GitHub/CapstoneRepo/Test Hotkey Files/pseudolang.txt"
+file = "C:/Users/joshu/OneDrive/Documents/GitHub/CapstoneRepo/Test Hotkey Files/equationsExamples.txt"
 
 tree = Reader.createCommandTree(file)
 info = tree.solveAndPrint()
