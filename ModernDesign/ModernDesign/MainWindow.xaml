@@ -64,9 +64,9 @@
                 <ColumnDefinition Width="250"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            
-               
-            <StackPanel Grid.Column="0">
+
+            <Border Background="#272537" CornerRadius="10 10 10 10" Grid.Row="0" Margin="10 10 10 10">
+            <StackPanel Grid.Column="0" Margin="10 10 10 10">
                     <RadioButton Content="Home"
                                  Height="75"
                                  Foreground="White" 
@@ -77,7 +77,7 @@
                     <RadioButton Content="CreateScript"
                                  Height="75"
                                  Foreground="White" 
-                                 FontSize="38"
+                                 FontSize="36"
                                  Style="{StaticResource MenuButtonTheme}"
                                  Command="{Binding CreateScripCommand}"/>
                     <RadioButton Content="Load Script"
@@ -88,12 +88,14 @@
 
 
             </StackPanel>
-                <ContentControl Grid.Column="1"
+                
+            </Border>
+            <ContentControl Grid.Column="1"
                                 Margin="10"
                                 Content="{Binding CurrentView}"
                                 VerticalAlignment="Top">
                     
-                </ContentControl>       
+             </ContentControl>       
             <!-- this is where the main view gets swapped out-->
              
         </Grid>

@@ -43,54 +43,16 @@ def HotkeyAction(keys):
 
 
 
-file = "C:/Users/joshu/Desktop/git/CapstoneRepo/Test Hotkey Files/equationsExamples.txt"
+#file = "C:/Users/joshu/Desktop/git/CapstoneRepo/Test Hotkey Files/equationsExamples.txt"
+file = "C:/Users/joshu/OneDrive/Documents/GitHub/CapstoneRepo/Test Hotkey Files/pseudolang.txt"
 
-
-tree = Reader.createCommandTree(file)   
+tree = Reader.createCommandTree(file)
+info = tree.solveAndPrint()
 HKList = tree.getHKList()
-print(HKList)
+
+print(f"Prints Hotkeys In List format{HKList}")
 keys = formatKeys(HKList)
-print(repr(keys))
-HotkeyAction(keys)
+print(f"Prints keys{repr(keys)}")
+#HotkeyAction(keys)
 
-
-
-
-
-
-#ignore below
-'''
-    def keyboard_listener():
-        global listener
-        def on_press(key):
-            print('on press', key)
-
-        def on_release(key):
-            print('on release', key)
-            if key == keyboard.Key.esc:
-                return False 
-     
-        def win32_event_filter(msg, data):
-            #checks if message is the key press
-            blocked =["84,69,83"]
-            if (msg == 257 or msg == 256) and (data.vkCode == 84 or data.vkCode == 69 or data.vkCode == 83): 
-                print(msg,data)
-                print("Suppressing F1 up")
-                listener._suppress = True
-               
-            else:
-                listener._suppress = False
-            return True
-                
-        return keyboard.Listener(
-            on_press=on_press,
-            on_release=on_release,
-            win32_event_filter=win32_event_filter,
-            suppress=False
-        )
-    
-    listener = keyboard_listener()
-
-    with listener as ml:
-        ml.join() 
-'''
+print(info)

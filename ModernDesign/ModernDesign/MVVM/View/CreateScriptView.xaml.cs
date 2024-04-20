@@ -72,7 +72,7 @@ namespace ModernDesign.MVVM.View
         {
 
             //ScriptTextBox.Text 
-            string path = "C:/Users/joshu/Desktop/HotKey.txt";
+            string path = $"C:/Users/joshu/Desktop/{fileName.Text}.txt";
             File.WriteAllText(path, ScriptTextBox.Text);
 
             run_cmd("C:/Users/joshu/OneDrive/Documents/GitHub/CapstoneRepo/CallFunctions.py", "C:/Users/joshu/Desktop/HotKey.txt");
