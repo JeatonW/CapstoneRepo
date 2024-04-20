@@ -212,7 +212,7 @@ class TreeNode:
 		#solve normal one-lined logic (declaration, paste, highlight, etc)
 		else:
 			for i in self.children:
-				i.solve(tabs + 1)
+				i.solve()
 
 		if(self.data.comType == "Paste"):
 			tupleNameAndVar = ("Paste", str(self.data.string))
@@ -410,5 +410,5 @@ def createCommandTree(fileName:str) -> CommandTree:
 
 	return CommandTree(headNode)
 
-#ct = createCommandTree(input("Input file name: "))
-#ct.solveAndPrint()
+ct = createCommandTree(input("Input file name: "))
+ct.solve()
