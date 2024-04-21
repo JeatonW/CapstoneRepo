@@ -33,7 +33,3 @@ T + E + S::
 		test = 4
 		testAgain = 3
 
-	iFor = 0
-	for(3):
-		iFor = iFor + 1
-		paste(iFor)

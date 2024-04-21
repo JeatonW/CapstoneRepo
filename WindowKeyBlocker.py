@@ -49,10 +49,27 @@ file = "C:/Users/joshu/OneDrive/Documents/GitHub/CapstoneRepo/Test Hotkey Files/
 tree = Reader.createCommandTree(file)
 info = tree.solve()
 HKList = tree.getHKList()
-
-print(f"Prints Hotkeys In List format{HKList}")
+#print(f"Prints Hotkeys In List format{HKList}")
 keys = formatKeys(HKList)
-print(f"Prints keys{repr(keys)}")
+#print(f"Prints keys{repr(keys)}")
 #HotkeyAction(keys)
 
-print(info)
+def unpacktuple(commands):
+    for i in commands:
+        if i[0] == "Paste":
+            PastInfo = i[1:]
+        elif i[0] == "Highlight":
+            HighlightInfo = i[1:]
+        elif i[0] == "Start Cursor":
+            StartCurosrInfo = i[1:]
+        elif i[0] == "Move Cursor":
+            MoveCursorInfo = i[1:]
+
+        else:
+            print("error with tuple")
+    return PastInfo, HighlightInfo, StartCurosrInfo, MoveCursorInfo
+P,H,S,M =  unpacktuple(info)
+print(P)
+print(H)
+print(S)
+print(M)
