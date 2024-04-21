@@ -47,7 +47,7 @@ def HotkeyAction(keys):
 file = "C:/Users/joshu/OneDrive/Documents/GitHub/CapstoneRepo/Test Hotkey Files/equationsExamples.txt"
 
 tree = Reader.createCommandTree(file)
-info = tree.solveAndPrint()
+info = tree.solve()
 HKList = tree.getHKList()
 
 print(f"Prints Hotkeys In List format{HKList}")
