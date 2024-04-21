@@ -1,6 +1,7 @@
 import CommandFormatter as CF
 
 error = None
+executables = []
 
 class CommandTree:
 
@@ -74,8 +75,6 @@ class TreeNode:
 	def solveAndPrint(self) -> list:
 		return self.solveAndPrintHelper(0)
 	def solveAndPrintHelper(self, tabs) -> list:
-
-		executables = []
 
 		#print the number of tabs before printing the code line
 		for i in range(0, tabs):
@@ -158,8 +157,6 @@ class TreeNode:
 
 	#solves the entire tree
 	def solve(self) -> list:
-
-		executables = []
 
 		#try to solve the current line. save and print the error if there is one
 		try:
