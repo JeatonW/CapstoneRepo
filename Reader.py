@@ -23,9 +23,10 @@ class CommandTree:
 
 	def solve(self):
 		self.head.solve()
-
+		return executables
 	def solveAndPrint(self):
 		self.head.solveAndPrint()
+		return executables
 
 class TreeNode:
 
@@ -75,7 +76,7 @@ class TreeNode:
 	def solveAndPrint(self) -> list:
 		return self.solveAndPrintHelper(0)
 	def solveAndPrintHelper(self, tabs) -> list:
-
+		
 		#print the number of tabs before printing the code line
 		for i in range(0, tabs):
 			print("   ", end="")
@@ -157,7 +158,6 @@ class TreeNode:
 
 	#solves the entire tree
 	def solve(self) -> list:
-
 		#try to solve the current line. save and print the error if there is one
 		try:
 			self.data.solve()
@@ -214,7 +214,6 @@ class TreeNode:
 		if(self.data.comType == "Paste"):
 			tupleNameAndVar = ("Paste", str(self.data.string))
 			executables.append(tupleNameAndVar)
-			print(executables)
 		if(self.data.comType == "Highlight"):
 			tupleNameAndVar = ("Highlight", self.data.distance)
 			executables.append(tupleNameAndVar)
@@ -224,7 +223,6 @@ class TreeNode:
 		if(self.data.comType == "Move Cursor"):
 			tupleNameAndVar = ("Move Cursor", self.data.moveX, self.data.moveY)
 			executables.append(tupleNameAndVar)
-		print(executables)
 		return executables
 
 	#get a node using its index in preorder traversal
