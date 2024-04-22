@@ -20,6 +20,10 @@
                 <view:CreateScriptView/>
             </DataTemplate>
             
+            <BitmapImage x:Key="I" UriSource="Images/I.png"/>
+            <BitmapImage x:Key="D" UriSource="Images/D.png"/>
+            <BitmapImage x:Key="E" UriSource="Images/E.png"/>
+           
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -14,7 +14,7 @@
         <StackPanel Orientation="Horizontal">
             <Border Width="650"
                     Height="500"
-                    Background="#c9c6bf">
+                    Background="#272537">
                 <Border.Clip>
                     <RectangleGeometry RadiusX="10"
                                        RadiusY="10"
@@ -25,7 +25,9 @@
                            HorizontalAlignment="Center"
                            VerticalAlignment="Top"
                            Margin="0,50,0,0" 
-                           TextWrapping="Wrap" Width="607">
+                           TextWrapping="Wrap" 
+                           Width="607" 
+                           Foreground="White">
 
                 </TextBlock>
             </Border>

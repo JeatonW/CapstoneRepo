@@ -38,9 +38,9 @@
                         <ColumnDefinition Width="45*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="2" HorizontalAlignment="Left" Text="Hotkeys" FontSize="32" FontFamily="Segoe UI" Foreground="white" Grid.ColumnSpan="2" Margin="38,0,0,0" Width="121"/>
-                    <Image  Source="C:\Users\joshu\source\repos\ModernDesign\ModernDesign\Images\I.png"/>
-                    <Image  Source="C:\Users\joshu\source\repos\ModernDesign\ModernDesign\Images\D.png" Grid.ColumnSpan="2" Margin="41,0,4,0"/>
-                    <Image  Source="C:\Users\joshu\source\repos\ModernDesign\ModernDesign\Images\E.png" Grid.ColumnSpan="2" Margin="37,0,7,0" Grid.Column="1"/>
+                    <Image  Source="{StaticResource I}"/>
+                    <Image  Source="{StaticResource D}" Grid.ColumnSpan="2" Margin="41,0,4,0"/>
+                    <Image  Source="{StaticResource E}" Grid.ColumnSpan="2" Margin="37,0,7,0" Grid.Column="1"/>
                 </Grid>
 
                 <Grid Grid.Column="2" HorizontalAlignment="Right">
