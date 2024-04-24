@@ -437,6 +437,12 @@ def createCommandTree(fileName:str) -> CommandTree:
 
 	return CommandTree(headNode)
 
-#ct = createCommandTree(input("Input file name: "))
-#for t in ct.solveAndPrint():
-	#print(t)
+#me test print stuff
+def MeTest():
+	ct = createCommandTree(input("Input file name: "))
+	for t in ct.solveAndPrint():
+		print(t)
+
+#only run if this is main
+if __name__ == '__main__':
+	MeTest()
