@@ -95,6 +95,7 @@ C:\Users\joshu\Documents\GitHub\CapstoneRepo\ModernDesign\ModernDesign\obj\Debug
 C:\Users\joshu\Documents\GitHub\CapstoneRepo\ModernDesign\ModernDesign\obj\Debug\ModernDesign.csproj.CoreCompileInputs.cache
 C:\Users\joshu\Documents\GitHub\CapstoneRepo\ModernDesign\ModernDesign\obj\Debug\ModernDesign.exe
 C:\Users\joshu\Documents\GitHub\CapstoneRepo\ModernDesign\ModernDesign\obj\Debug\ModernDesign.pdb
+<<<<<<< HEAD
 C:\Users\shake\OneDrive\Desktop\capstone\CapstoneRepo\ModernDesign\ModernDesign\bin\Debug\ModernDesign.exe.config
 C:\Users\shake\OneDrive\Desktop\capstone\CapstoneRepo\ModernDesign\ModernDesign\bin\Debug\ModernDesign.exe
 C:\Users\shake\OneDrive\Desktop\capstone\CapstoneRepo\ModernDesign\ModernDesign\bin\Debug\ModernDesign.pdb
@@ -119,3 +120,5 @@ C:\Users\shake\OneDrive\Desktop\capstone\CapstoneRepo\ModernDesign\ModernDesign\
 C:\Users\shake\OneDrive\Desktop\capstone\CapstoneRepo\ModernDesign\ModernDesign\obj\Debug\ModernDesign.pdb
 C:\Users\joshu\Documents\GitHub\CapstoneRepo\ModernDesign\ModernDesign\obj\Debug\MVVM\View\LoadScriptView.baml
 C:\Users\joshu\Documents\GitHub\CapstoneRepo\ModernDesign\ModernDesign\obj\Debug\MVVM\View\LoadScriptView.g.cs
+=======
+>>>>>>> parent of 773f057 (Merge branch 'main' of https://github.com/JeatonW/CapstoneRepo)

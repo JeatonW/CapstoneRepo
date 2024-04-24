@@ -19,12 +19,7 @@
             <DataTemplate DataType="{x:Type viewModel:CreateScripViewModel}">
                 <view:CreateScriptView/>
             </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewModel:LoadScriptViewModel}">
-                <view:LoadScriptView/>
-            </DataTemplate>
-
-
+            
             <BitmapImage x:Key="I" UriSource="Images/I.png"/>
             <BitmapImage x:Key="D" UriSource="Images/D.png"/>
             <BitmapImage x:Key="E" UriSource="Images/E.png"/>
