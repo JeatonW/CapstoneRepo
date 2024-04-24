@@ -1,0 +1,20 @@
+CTRL_L + ALT_L + F::
+
+	paste("for i in range(0,0):")
+	startCursor(0,4)
+	highlight(1)
+
+	key(M1, 1):
+		exit
+
+	key(TAB, 1):
+		moveCursor(0,10)
+		highlight(1)
+
+	key(TAB, 2):
+		moveCursor(0,1)
+		highlight(1)
+
+	key(TAB, 3):
+		moveCursor(1,0)
+		paste("\t")

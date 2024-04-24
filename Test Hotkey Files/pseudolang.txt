@@ -12,33 +12,29 @@ CTRL_L + ALT_L + F::
 		startCursor(0,10)
 		highlight(5)
 
-	while(active):
+	key(M1, 1):
+		exit
 
-		if(mouseClicked):
-			active = false
+	key(TAB, 1):
+		py:
+			moveCursor(0,10)
+			highlight(1)
+		java:
+			moveCursor(0,4)
+			highlight(4)
 
-		if(tabPressed):
-			if(tabs == 0):
-				py:
-					moveCursor(0,10)
-					highlight(1)
-				java:
-					moveCursor(0,4)
-					highlight(4)
+	key(TAB, 2):
+		py:
+			moveCursor(0,1)
+			highlight(1)
+		java:
+			moveCursor(0,5)
+			highlight(9)
 
-			if(tabs == 1):
-				py:
-					moveCursor(0,1)
-					highlight(1)
-				java:
-					moveCursor(0,5)
-					highlight(9)
-			if(tabs == 2):
-				moveCursor(1,0)
-				paste("\t")
-				active = false
-
-			tabs = tabs + 1
+	key(TAB, 3):
+		moveCursor(1,0)
+		paste("\t")
+		active = false
 
 CTRL_L + ALT_L + W::
 

@@ -1,7 +1,6 @@
 import CommandFormatter as CF
 
 error = None
-executables = []
 
 class CommandTree:
 
@@ -22,11 +21,9 @@ class CommandTree:
 		return listOfHotKeys
 
 	def solve(self):
-		self.head.solve()
-		return executables
+		return self.head.solve()
 	def solveAndPrint(self):
-		self.head.solveAndPrint()
-		return executables
+		return self.head.solveAndPrint()
 
 class TreeNode:
 
@@ -76,6 +73,8 @@ class TreeNode:
 	def solveAndPrint(self) -> list:
 		return self.solveAndPrintHelper(0)
 	def solveAndPrintHelper(self, tabs) -> list:
+
+		executables = []
 		
 		#print the number of tabs before printing the code line
 		for i in range(0, tabs):
@@ -89,6 +88,12 @@ class TreeNode:
 			print(error)
 			exit()
 		self.data.print()
+
+
+
+		if(self.data.comType == "Key Press"):
+			tupleNameAndVar = ("Key Press", self.data.key, self.data.pressCount)
+			executables.append(tupleNameAndVar)
 
 		#perform if logic if current line is an if statement (solve and print children if necessary)
 		if(self.data.comType == "If"):
@@ -141,6 +146,9 @@ class TreeNode:
 			for i in self.children:
 				i.solveAndPrintHelper(tabs + 1)
 
+		if(self.data.comType == "Exit"):
+			tupleName = ("Exit")
+			executables.append(tupleName)
 		if(self.data.comType == "Paste"):
 			tupleNameAndVar = ("Paste", str(self.data.string))
 			executables.append(tupleNameAndVar)
@@ -158,6 +166,9 @@ class TreeNode:
 
 	#solves the entire tree
 	def solve(self) -> list:
+
+		executables = []
+
 		#try to solve the current line. save and print the error if there is one
 		try:
 			self.data.solve()
@@ -166,13 +177,24 @@ class TreeNode:
 			print(error)
 			exit()
 
+
+		
+		if(self.data.comType == "Key Press"):
+
+			childExec = []
+			for i in self.children:
+				childExec += i.solve()
+
+			tupleNameAndVar = ("Key Press", self.data.key, self.data.pressCount, childExec)
+			executables.append(tupleNameAndVar)
+
 		#perform if logic if current line is an if statement (solve and print children if necessary)
-		if(self.data.comType == "If"):
+		elif(self.data.comType == "If"):
 			if(self.data.comparisonAnswer == "1"):
 
 				#solve children
 				for i in self.children:
-					i.solve()
+					executables += i.solve()
 
 		#perform while logic if current line is a while loop (solve and print children if necessary)
 		elif(self.data.comType == "While"):
@@ -180,7 +202,7 @@ class TreeNode:
 
 				#solve children
 				for i in self.children:
-					i.solve()
+					executables += i.solve()
 
 				#try to solve the while loop again for each child; values have changed. store and print error if there is one
 				try:
@@ -196,7 +218,7 @@ class TreeNode:
 
 				#solve children
 				for i in self.children:
-					i.solve()
+					executables += i.solve()
 
 				#try to solve the for loop again for each child; values have changed. store and print error if there is one
 				try:
@@ -209,8 +231,11 @@ class TreeNode:
 		#solve normal one-lined logic (declaration, paste, highlight, etc)
 		else:
 			for i in self.children:
-				i.solve()
-		
+				executables += i.solve()
+
+		if(self.data.comType == "Exit"):
+			tupleName = ("Exit", 0)
+			executables.append(tupleName)
 		if(self.data.comType == "Paste"):
 			tupleNameAndVar = ("Paste", str(self.data.string))
 			executables.append(tupleNameAndVar)
@@ -223,6 +248,7 @@ class TreeNode:
 		if(self.data.comType == "Move Cursor"):
 			tupleNameAndVar = ("Move Cursor", self.data.moveX, self.data.moveY)
 			executables.append(tupleNameAndVar)
+
 		return executables
 
 	#get a node using its index in preorder traversal
@@ -298,6 +324,8 @@ def formatCommand(command:str):
 
 	if("**BEGIN SCRIPT**" == command):
 		return CF.ScriptBegin()
+	elif("exit" == command):
+		return CF.Exit(command)
 	elif("::" == command[-2:]):
 		return CF.HotKey(command)
 	elif("while(" == command[:6]):
@@ -306,6 +334,8 @@ def formatCommand(command:str):
 		return CF.For(command)
 	elif("if(" == command[:3]):
 		return CF.If(command)
+	elif("key(" == command[:4]):
+		return CF.KeyPress(command)
 	elif(":" == command[-1:]):
 		return CF.Language(command)
 	elif("paste(" == command[:6]):
@@ -406,5 +436,6 @@ def createCommandTree(fileName:str) -> CommandTree:
 
 	return CommandTree(headNode)
 
-#ct = createCommandTree(input("Input file name: "))
-#ct.solve()
+ct = createCommandTree(input("Input file name: "))
+for t in ct.solve():
+	print(t)

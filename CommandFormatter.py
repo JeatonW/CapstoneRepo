@@ -35,6 +35,16 @@ class FormattedCommand:
 
 		return False
 
+	#returns true if a string is a number
+	def isNum(self, string:str) -> bool:
+
+		for c in string:
+			asciiVal = ord(c)
+			if(asciiVal < 48 or asciiVal > 57):
+				return False
+
+		return True
+
 	#returns true if a character is a letter, number, or underscore
 	def isNumOrLet(self, character:str) -> bool:
 
@@ -83,6 +93,12 @@ class FormattedCommand:
 			case "ENTER":
 				return True
 			case "SPACE":
+				return True
+			case "M1":
+				return True
+			case "M2":
+				return True
+			case "M3":
 				return True
 			case _:
 				return self.isNumOrLet(string)
@@ -491,6 +507,70 @@ class MoveCursor(FormattedCommand):
 			print("Move Cursor (Unsolved): " + self.originalCodeLine)
 		else:
 			print("Move Cursor: " + str(self.moveX) + ", " + str(self.moveY))
+
+class KeyPress(FormattedCommand):
+
+	def __init__(self, originalCodeLine:str):
+		super().__init__("Key Press", originalCodeLine)
+		self.checkSyntax(originalCodeLine)
+		self.key = self.pressCount = None
+
+	def checkSyntax(self, originalCodeLine:str):
+		if(originalCodeLine[:4] != "key(" or originalCodeLine[-2:] != "):"):
+			raise Exception("Invalid syntax for Key Press method.")
+
+	def argumentKeySyntax(self, string:str):
+
+		string = string.replace(" ", "")
+		vals = string.split(",")
+
+		#invalid # of args
+		if(len(vals) != 2):
+			raise Exception(self.comType + " method takes 2 arguments, but " + str(len(vals)) + " were given.")
+
+		#no args were given
+		if(len(vals) == 1 and vals[0] == ""):
+			raise Exception(self.comType + " method takes 2 arguments, but 0 were given.")
+
+		#make sure first argument is a key
+		if(not self.checkKey(vals[0])):
+			raise Exception("Invalid key.")
+
+		#make sure second argument is an integer
+		if(not self.isNum(vals[1])):
+			print(vals[1])
+			raise Exception("Must input an integer into second argument.")
+
+		return vals
+
+	def solve(self):
+		vals = self.argumentKeySyntax(self.originalCodeLine[4:-2])
+
+		self.key = vals[0]
+		self.pressCount = es.solveEquation(vals[1])
+
+	def print(self):
+		if(self.key == self.pressCount == None):
+			print("Key Press (Unsolved): " + self.originalCodeLine)
+		else:
+			print("Key Press: " + str(self.key) + ", " + str(self.pressCount))
+
+class Exit(FormattedCommand):
+
+	def __init__(self, originalCodeLine:str):
+		super().__init__("Exit", originalCodeLine)
+		self.checkSyntax(originalCodeLine)
+
+	def checkSyntax(self, originalCodeLine:str):
+
+		if(originalCodeLine != "exit"):
+			raise Exception("Invalid syntax for exit command.")
+
+	def solve(self):
+		pass
+
+	def print(self):
+		print("Exit")
 
 class If(FormattedCommand):
 
