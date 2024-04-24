@@ -89,19 +89,22 @@ class TreeNode:
 			exit()
 		self.data.print()
 
-
-
 		if(self.data.comType == "Key Press"):
-			tupleNameAndVar = ("Key Press", self.data.key, self.data.pressCount)
+
+			childExec = []
+			for i in self.children:
+				childExec += i.solveAndPrintHelper(tabs + 1)
+
+			tupleNameAndVar = ("Key Press", self.data.key, self.data.pressCount, childExec)
 			executables.append(tupleNameAndVar)
 
 		#perform if logic if current line is an if statement (solve and print children if necessary)
-		if(self.data.comType == "If"):
+		elif(self.data.comType == "If"):
 			if(self.data.comparisonAnswer == "1"):
 
 				#solve and print children
 				for i in self.children:
-					i.solveAndPrintHelper(tabs + 1)
+					executables += i.solveAndPrintHelper(tabs + 1)
 
 		#perform while logic if current line is a while loop (solve and print children if necessary)
 		elif(self.data.comType == "While"):
@@ -109,7 +112,7 @@ class TreeNode:
 
 				#solve and print children
 				for i in self.children:
-					i.solveAndPrintHelper(tabs + 1)
+					executables += i.solveAndPrintHelper(tabs + 1)
 
 				#try to solve and print the while loop again for each child; values have changed. store and print error if there is one
 				try:
@@ -128,7 +131,7 @@ class TreeNode:
 
 				#solve and print children
 				for i in self.children:
-					i.solveAndPrintHelper(tabs + 1)
+					executables += i.solveAndPrintHelper(tabs + 1)
 
 				#try to solve and print the for loop again for each child; values have changed. store and print error if there is one
 				try:
@@ -144,7 +147,7 @@ class TreeNode:
 		#normal one-lined logic (declaration, paste, highlight, etc)
 		else:
 			for i in self.children:
-				i.solveAndPrintHelper(tabs + 1)
+				executables += i.solveAndPrintHelper(tabs + 1)
 
 		if(self.data.comType == "Exit"):
 			tupleName = ("Exit")
@@ -176,8 +179,6 @@ class TreeNode:
 			error = "\nLine " + str(self.line) + ": " + str(self.data.originalCodeLine) + "\n" + str(e)
 			print(error)
 			exit()
-
-
 		
 		if(self.data.comType == "Key Press"):
 
@@ -234,8 +235,8 @@ class TreeNode:
 				executables += i.solve()
 
 		if(self.data.comType == "Exit"):
-			tupleName = ("Exit", 0)
-			executables.append(tupleName)
+			tupleNameAndVar = ("Exit", 0)
+			executables.append(tupleNameAndVar)
 		if(self.data.comType == "Paste"):
 			tupleNameAndVar = ("Paste", str(self.data.string))
 			executables.append(tupleNameAndVar)
