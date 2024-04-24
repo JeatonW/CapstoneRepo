@@ -117,3 +117,5 @@ C:\Users\shake\OneDrive\Desktop\capstone\CapstoneRepo\ModernDesign\ModernDesign\
 C:\Users\shake\OneDrive\Desktop\capstone\CapstoneRepo\ModernDesign\ModernDesign\obj\Debug\ModernDesign.csproj.CoreCompileInputs.cache
 C:\Users\shake\OneDrive\Desktop\capstone\CapstoneRepo\ModernDesign\ModernDesign\obj\Debug\ModernDesign.exe
 C:\Users\shake\OneDrive\Desktop\capstone\CapstoneRepo\ModernDesign\ModernDesign\obj\Debug\ModernDesign.pdb
+C:\Users\joshu\Documents\GitHub\CapstoneRepo\ModernDesign\ModernDesign\obj\Debug\MVVM\View\LoadScriptView.baml
+C:\Users\joshu\Documents\GitHub\CapstoneRepo\ModernDesign\ModernDesign\obj\Debug\MVVM\View\LoadScriptView.g.cs
