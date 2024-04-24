@@ -1,0 +1,14 @@
+﻿<UserControl x:Class="ModernDesign.MVVM.View.LoadScriptView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             >
+    <Grid>
+        <TextBox Text="{Binding ScriptContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 AcceptsReturn="True"
+                 HorizontalScrollBarVisibility="Auto"
+                 VerticalScrollBarVisibility="Auto"
+                 FontFamily="Consolas"
+                 FontSize="14"
+                 TextWrapping="Wrap"/>
+    </Grid>
+</UserControl>
