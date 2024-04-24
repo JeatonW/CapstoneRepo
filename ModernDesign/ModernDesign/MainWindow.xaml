@@ -70,21 +70,22 @@
                     <RadioButton Content="Home"
                                  Height="75"
                                  Foreground="White" 
-                                 FontSize="38"
+                                 FontSize="24"
                                  Style="{StaticResource MenuButtonTheme}"
                                  IsChecked="True"
-                                 Command="{Binding HomeViewCommand}"/>
+                                 Command="{Binding HomeViewCommand}" Checked="RadioButton_Checked"/>
                     <RadioButton Content="CreateScript"
                                  Height="75"
                                  Foreground="White" 
-                                 FontSize="36"
+                                 FontSize="24"
                                  Style="{StaticResource MenuButtonTheme}"
-                                 Command="{Binding CreateScripCommand}"/>
+                                 Command="{Binding CreateScripCommand}" Checked="RadioButton_Checked_1"/>
                     <RadioButton Content="Load Script"
                                  Height="75"
                                  Foreground="White" 
-                                 FontSize="38"
-                                 Style="{StaticResource MenuButtonTheme}"/>     
+                                 FontSize="24"
+                                 Style="{StaticResource MenuButtonTheme}"
+                                 Command="{Binding LoadScriptCommand}"/>     
 
 
             </StackPanel>

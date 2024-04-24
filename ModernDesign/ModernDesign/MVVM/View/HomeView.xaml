@@ -21,7 +21,7 @@
                                        Rect="0,0,650,500"/>
                 </Border.Clip>
                 <TextBlock Text="IDE Hotkeys aims to allow users to create customized preset commands within their preferred IDE to streamline coding and reduce the amount of time programmers have to spend moving their mouse. It is a fully customizable hotkey system that is powered through a self-created pseudo-language and python modules. ​"
-                           FontSize="26"
+                           FontSize="20"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Top"
                            Margin="0,50,0,0" 
