@@ -43,8 +43,8 @@ def HotkeyAction(keys):
 
 
 
-#file = "C:/Users/joshu/Desktop/git/CapstoneRepo/Test Hotkey Files/equationsExamples.txt"
-file = "C:/Users/joshu/OneDrive/Documents/GitHub/CapstoneRepo/Test Hotkey Files/equationsExamples.txt"
+file = "C:/Users/joshu/Desktop/git/CapstoneRepo/Test Hotkey Files/equationsExamples.txt"
+#file = "C:/Users/joshu/Desktop/git/CapstoneRepo/Test Hotkey FilesequationsExamples.txt"
 
 tree = Reader.createCommandTree(file)
 info = tree.solve()
@@ -68,6 +68,17 @@ def unpacktuple(commands):
         else:
             print("error with tuple")
     return PastInfo, HighlightInfo, StartCurosrInfo, MoveCursorInfo
+
+    #past will type out the information in the past section
+    # on hotket press, the information is pasted from the past tuple, we take the length of the past string and move the cursor back to the start of the
+    #pasted string, then we read starcursorinfor to move the cursor to the first replacing variable. then you read the highligh info to get the length of
+    # the first variable and highligh out to the end of its legth, then the user will type in what ever they want. after they replace it the cursor will
+    #be at the end of it then we read the move cursor for the next variable and repeat, after every move cursor info we read highlight infor and keep
+    # reapeating untill there is no more movecursor info.
+
+    #need to unpack new tab data that oragnizes the highligh and move cursor info. 
+
+
 P,H,S,M =  unpacktuple(info)
 print(P)
 print(H)

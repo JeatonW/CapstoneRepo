@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,6 +25,7 @@ namespace ModernDesign.MVVM.View
     /// </summary>
     public partial class CreateScriptView : UserControl
     {
+        private string folderpath = AppDomain.CurrentDomain.BaseDirectory;
         public CreateScriptView()
         {
             InitializeComponent();
@@ -53,6 +55,7 @@ namespace ModernDesign.MVVM.View
         }
         private void run_cmd(string cmd, string args)
         {
+
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = "python";
             start.Arguments = string.Format("{0} {1}", cmd, args);
@@ -63,17 +66,22 @@ namespace ModernDesign.MVVM.View
                 using (StreamReader reader = process.StandardOutput)
                 {
                     string result = reader.ReadToEnd();
-                    MessageBox.Show(result);
+                    MessageBox.Show(folderpath);
+
+
+
                 }
             }
         }
 
         private void CheckBox(object sender, RoutedEventArgs e)
         {
-
+            
             //ScriptTextBox.Text 
             string path = $"C:/Users/joshu/Desktop/{fileName.Text}.txt";
             File.WriteAllText(path, ScriptTextBox.Text);
+           
+            
 
             run_cmd("C:/Users/joshu/Desktop/git/CapstoneRepo/CallFunctions.py", $"C:/Users/joshu/Desktop/{fileName.Text}.txt");
         }
