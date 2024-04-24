@@ -75,7 +75,7 @@ namespace ModernDesign.MVVM.View
             string path = $"C:/Users/joshu/Desktop/{fileName.Text}.txt";
             File.WriteAllText(path, ScriptTextBox.Text);
 
-            run_cmd("C:/Users/joshu/OneDrive/Documents/GitHub/CapstoneRepo/CallFunctions.py", "C:/Users/joshu/Desktop/HotKey.txt");
+            run_cmd("C:/Users/joshu/Desktop/git/CapstoneRepo/CallFunctions.py", $"C:/Users/joshu/Desktop/{fileName.Text}.txt");
         }
     }
 }
