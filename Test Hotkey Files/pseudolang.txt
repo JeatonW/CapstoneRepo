@@ -3,14 +3,9 @@ CTRL_L + ALT_L + F::
 	active = true
 	tabs = 0
 
-	py:
-		paste("for i in range(0,0):")
-		startCursor(0,4)
-		highlight(1)
-	java:
-		paste("for(int i=START; i<SIZE; i+=INCREMENT) {\n\n}")
-		startCursor(0,10)
-		highlight(5)
+	paste("for i in range(0,0):")
+	startCursor(4, 0)
+	highlight(1)
 
 	while(active):
 
@@ -19,22 +14,14 @@ CTRL_L + ALT_L + F::
 
 		if(tabPressed):
 			if(tabs == 0):
-				py:
-					moveCursor(0,10)
-					highlight(1)
-				java:
-					moveCursor(0,4)
-					highlight(4)
+				moveCursor(10, 0)
+				highlight(1)
 
 			if(tabs == 1):
-				py:
-					moveCursor(0,1)
-					highlight(1)
-				java:
-					moveCursor(0,5)
-					highlight(9)
+				moveCursor(1, 0)
+				highlight(1)
 			if(tabs == 2):
-				moveCursor(1,0)
+				moveCursor(0, 1)
 				paste("\t")
 				active = false
 
@@ -49,7 +36,7 @@ CTRL_L + ALT_L + W::
 	java:
 		paste("while(i < SIZE) {\n\n}")
 
-	startCursor(0, 10)
+	startCursor(10, 0)
 	highlight(4)
 
 
