@@ -10,7 +10,8 @@
         <TextBlock Text="Welcome To the IDE HotKey System"
                    Foreground="white"
                    FontSize="28"
-                   HorizontalAlignment="Center"/>
+                   HorizontalAlignment="Center"
+                   FontFamily="Consolas Bold"/>
         <StackPanel Orientation="Horizontal">
             <Border Width="650"
                     Height="500"
@@ -20,19 +21,51 @@
                                        RadiusY="10"
                                        Rect="0,0,650,500"/>
                 </Border.Clip>
-                <TextBlock Text="IDE Hotkeys aims to allow users to create customized preset commands within their preferred IDE to streamline coding and reduce the amount of time programmers have to spend moving their mouse. It is a fully customizable hotkey system that is powered through a self-created pseudo-language and python modules. ​"
-                           FontSize="26"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Top"
-                           Margin="0,50,0,0" 
-                           TextWrapping="Wrap" 
-                           Width="607" 
-                           Foreground="White">
 
-                </TextBlock>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="IDE Hotkeys aims to allow users to create customized preset commands within their preferred IDE to streamline coding and reduce the amount of time programmers have to spend moving their mouse. It is a fully customizable hotkey system that is powered through a self-created pseudo-language and python modules. ​"
+                               FontSize="18"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Top"
+                               Margin="0,25,0,0" 
+                               TextWrapping="Wrap" 
+                               Width="600" 
+                               Foreground="White"
+                               FontFamily="Consolas Bold"/>
+
+                    <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="If you need help with makeing your own Hotkeys then please click the icon on the right. It will route you to our user manual where we go into exstesive detail on all the ways you can design your very own hotkeys"
+                                   FontSize="16"
+                                   TextWrapping="Wrap"
+                                   Foreground="White"
+                                   FontFamily="Consolas Bold"/>
+                        <TextBlock Grid.Column="1">
+                             <Hyperlink x:Name="link" NavigateUri="https://github.com/JeatonW/CapstoneRepo/wiki/User-Manual" RequestNavigate="Hyperlink_RequestNavigate">
+                                 <Image  Source="{DynamicResource Github}"/>
+                             </Hyperlink>
+                        </TextBlock>
+                    </Grid>
+                    
+                    
+                    
+                    
+                </Grid>
+                
+                
+                
             </Border>
+            
         </StackPanel>
-
+        
 
 
     </StackPanel>
