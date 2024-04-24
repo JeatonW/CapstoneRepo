@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,5 +25,17 @@ namespace ModernDesign.MVVM.View
         {
             InitializeComponent();
         }
+        //function to open the link when the icon is clicked
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true; 
+        }
+
+        public class DesignTimeViewModel
+        {
+            public string DesignTimeImage { get; } = "pack://application:,,,/ ModernDesign;component/Images/githubLogo.png";
+        }
+
     }
 }

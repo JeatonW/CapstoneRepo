@@ -126,5 +126,10 @@
     <Resource Include="Images\E.png" />
     <Resource Include="Images\I.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\githubLogo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -40,5 +40,10 @@ namespace ModernDesign
         {
             this.WindowState = WindowState.Minimized;
         }
+
+        private void loadScript(object sender, RoutedEventArgs e)
+        {
+            //this is where the file manager will open and they will select there scripts
+        }
     }
 }

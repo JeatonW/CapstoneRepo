@@ -27,14 +27,14 @@
                 
                 <Grid Margin="10 5 0 5" HorizontalAlignment="Left">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="45"/>
+                        <ColumnDefinition Width="55"/>
                         <ColumnDefinition Width="10"/>
                         <ColumnDefinition Width="45*"/>
                         
                           
                 </Grid.ColumnDefinitions>
 
-                    <Button Grid.Column="0" VerticalAlignment="Top" Height="40" Width="45" Content="Save" FontSize="20" Click="SaveButton_Click">
+                    <Button FontFamily="Consolas Bold" Grid.Column="0" VerticalAlignment="Top" Height="40" Width="auto" Content="Save" FontSize="20" Click="SaveButton_Click">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
@@ -42,7 +42,7 @@
                         </Button.Resources>
                     </Button>
 
-                    <Button Grid.Column="2" Content="Check Script" FontSize="20" Click="CheckBox">
+                    <Button FontFamily="Consolas Bold" Grid.Column="2" Content="Check Script" FontSize="20" Click="CheckBox">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
@@ -61,10 +61,10 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Border Background="Transparent" Grid.Column="0" CornerRadius="18,18,18,18">
-                        <TextBlock VerticalAlignment="Center" Height="auto" Width="auto" Text="Name of File:" FontSize="18" Foreground="White"/>
+                        <TextBlock FontFamily="Consolas Bold" VerticalAlignment="Center" Height="auto" Width="auto" Text="Name of File:" FontSize="18" Foreground="White"/>
                     </Border>
                     
-                    <TextBox Name="fileName" Grid.Column="1" Width="200" FontSize="20" TextAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Margin="10 0 0 0" Name="fileName" Grid.Column="1" Width="200" FontSize="20" TextAlignment="Left" VerticalAlignment="Center"/>
                 </Grid>
             </Border>
         </Grid>
