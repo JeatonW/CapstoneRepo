@@ -1,4 +1,4 @@
-CTRL_L + ALT_L + F::
+CTRL_L + ALT_L + H::
 
 	paste("for i in range(0,0):")
 	startCursor(4,0)
