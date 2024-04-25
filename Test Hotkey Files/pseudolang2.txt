@@ -1,5 +1,10 @@
 CTRL_L + ALT_L + H::
 
+	test = 5
+	text = test + test
+
+	stringVar = "this is a test"
+
 	paste("for i in range(0,0):")
 	startCursor(4,0)
 	highlight(1)
@@ -18,10 +23,3 @@ CTRL_L + ALT_L + H::
 	key(TAB, 3):
 		moveCursor(0,1)
 		paste("\t")
-
-
-
-
-
-
-		   for i in range(0,0):

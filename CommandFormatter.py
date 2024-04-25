@@ -202,23 +202,76 @@ class FormattedCommand:
 	#check the string for any pre-declared variables. if any exist, replace them with their value
 	def replaceVarsWithVals(self, string:str) -> str:
 
+		#remove beginning space(s)
+		while(string[0] == " "):
+			string = string[1:]
+
+		#determine if equation starts with quote or not
+		if(string[0] == "\""):
+			startWithQuote = True
+		else:
+			startWithQuote = False
+
+		#split the string at each quotation mark
+		stringNoQuotations = string.split("\"")
+
+		#delete empty elements
+		stringNoQuotations = list(filter(None, stringNoQuotations))
+
+		#split this array of strings into string inside and outside quotations
+		#we only want to replace variables with values outside of quotation marks
+		quotes = []
+		noQuotes = []
+		quoteSwitch = startWithQuote
+		for i in stringNoQuotations:
+			if(startWithQuote):
+				quotes.append(i)
+			else:
+				noQuotes.append(i)
+			quoteSwitch = not quoteSwitch
+
 		#check for every key in the equation
 		keyList = varDict.getKeyList()
 		for k in keyList:
 
-			#a variable has been found
-			if k in string:
+			#handle each substring that was found outside of quotation marks
+			i = 0
+			while(i < len(noQuotes)):
 
-				#determine if the variable is float or string type
-				match(varDict.getType(k)):
+				#a variable has been found
+				if k in noQuotes[i]:
 
-					case "Float":
-						#print(string + " " + str(varDict.get(k)))
-						string = string.replace(k, str(varDict.get(k)))
-					case "String":
-						string = self.replaceOutsideQuotes(string, k)
+					#determine if the variable is float or string type
+					match(varDict.getType(k)):
 
-		return string
+						case "Float":
+							#print(string + " " + str(varDict.get(k)))
+							noQuotes[i] = string.replace(k, str(varDict.get(k)))
+						case "String":
+							noQuotes[i] = self.replaceOutsideQuotes(noQuotes[i], k)
+
+				i = i + 1
+
+		#add the strings back together in order to form final string
+		finalString = ""
+		if(startWithQuote):
+			i = 0
+			while(i < len(quotes) or i < len(noQuotes)):
+				if(i < len(quotes)):
+					finalString = finalString + "\"" + quotes[i] + "\""
+				if(i < len(noQuotes)):
+					finalString = finalString + noQuotes[i]
+				i = i + 1
+		else:
+			i = 0
+			while(i < len(quotes) or i < len(noQuotes)):
+				if(i < len(noQuotes)):
+					finalString = finalString + noQuotes[i]
+				if(i < len(quotes)):
+					finalString = finalString + "\"" + quotes[i] + "\""
+				i = i + 1
+
+		return finalString
 
 	#when modifying string equations, only replace variables if they are outside quotation marks
 	def replaceOutsideQuotes(self, string:str, k:str) -> str:
