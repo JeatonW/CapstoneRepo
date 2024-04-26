@@ -50,7 +50,7 @@ def HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfter
         else:
             wasNumlockDisabled = False
 
-        
+
         #selects the initial variable
         keyboard.press('left shift')
         keyboard.press('right shift')
@@ -73,7 +73,7 @@ def HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfter
     def tab_pressed(MoveAfterTab,HighlightonTab,wasNumlockDisabled):
         print("tab hit")
         nonlocal tabindex
-
+        print(tabindex)
         #checks the length of the tab variable to make sure to only use this if there are tabs left, else we unhook tab to free is from the program.
         if tabindex < len(MoveAfterTab):
             time.sleep(.5)
@@ -87,6 +87,8 @@ def HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfter
             tabindex+=1
         #after all the tabs have been gone through it unhooks tab and checks if we diabled numlock at the start and will re-enable it 
         else:
+            tabindex = 0
+            print("unhooking tab")
             keyboard.remove_hotkey('tab')
             if wasNumlockDisabled:
                 pyautogui.press('numlock')  
@@ -112,6 +114,7 @@ def HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfter
 def unpacktuple(commands):
     tabInfo = []
     for i in commands:
+        print(i)
         if i[0] == "Paste":
             PastInfo = i[1:]
         elif i[0] == "Highlight":
@@ -133,6 +136,7 @@ def processTabs(tabList):
     movecursorInfo = []
     highlightInfoTab = []
     for tabs in tabList:
+        print(tabs)
         movecursorInfo.append(tabs[0][1:])
         highlightInfoTab.append(tabs[1][1:])
 
@@ -150,12 +154,20 @@ info = tree.solve()
 HKList = tree.getHKList()
 keys = formatKeys(HKList)
 
+print(info)
+
 #unpacks the tuples and unpacks the tabs information to be stored in their individual variables for processing
 PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,tabInfo =  unpacktuple(info)
 MoveAfterTab,HighlightonTab = processTabs(tabInfo)
 
+print(f"\n{PastInfo}\n{HighlightInfo}\n{StartCurosrInfo}\n{mouseInfo}\n{tabInfo}\n{MoveAfterTab}\n{HighlightonTab}")
+
+
+
 #starts the main program
-HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfterTab,HighlightonTab)
+#HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfterTab,HighlightonTab)
+
+
 
 
 #below is a snipit of code that will return the active window
