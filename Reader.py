@@ -441,18 +441,28 @@ def createCommandTree(fileName:str) -> CommandTree:
 
 #me test print stuff
 def MeTest():
+
+	#put the whole script into a tree
 	ct = createCommandTree(input("Input file name: "))
+
+	#get all ur information; list of tuples (keyArray, treeBranch)
 	hks = ct.getHKList()
 
+	#unpack each tuple
 	i = 0
 	for hk in hks:
 		print(f"\nthis is hk#{i}: ")
 		
+		#take out the contents of the tuple
 		(keyArray, treeNode) = hk
 
+		#this is the list of keys for a particular hotkey
 		print(keyArray)
-		tuplesOfJustice = treeNode.solve()
 
+		#these are branches of the ct that you solve individually now
+		tuplesOfJustice = treeBranch.solve()
+
+		#print the TUPLES
 		for t in tuplesOfJustice:
 			print(t)
 
