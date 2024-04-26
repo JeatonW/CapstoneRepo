@@ -19,7 +19,3 @@ CTRL_L + ALT_L + H::
 	key(TAB, 2):
 		moveCursor(1,0)
 		highlight(1)
-
-	key(TAB, 3):
-		moveCursor(0,1)
-		paste("\t")
