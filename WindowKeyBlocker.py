@@ -13,7 +13,7 @@ def formatKeys(hotkeys):
             split = str(keys).split(".")[-1]
             if split.lower() in KeysToBeFormated:
                 string = split.lower()
-                Format = f"{string.split("_")[0] if string.split("_")[1] == "l" else None }"
+                Format = f"{string.split('_')[0] if string.split('_')[1] == 'l' else None }"
                 KeyFinal+=Format
             else:
                 KeyFinal += split.lower()
@@ -39,35 +39,24 @@ def HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfter
             pyautogui.press("left",interval=.01)
         
         keyboard.press('left shift')
-        time.sleep(.5)
         keyboard.press('right shift')
-        time.sleep(.5)
         pyautogui.press("right",presses=int(HighlightInfo[0]),interval=.01)
-        time.sleep(.5)
         keyboard.release('right shift')
-        time.sleep(.5)
         keyboard.release('left shift')
-        time.sleep(.5)
 
-        #pyautogui.press('shiftright')
-
-
-        print(keyboard.is_pressed('right shift'))
-        print("selection done")
-        keyboard.add_hotkey('tab',lambda:tab_pressed(MoveAfterTab,HighlightonTab),suppress=True)
-        print("tab as been added to hotkey")
-        keyboard.release('right shift')
-        print(keyboard.is_pressed('right shift'))
+        keyboard.add_hotkey('tab',lambda:tab_pressed(MoveAfterTab,HighlightonTab),suppress=True,trigger_on_release=True)
+        
         #for x in MoveAfterTab:
             #for NumberOfPresses in range(int(x[0])): 
             #    pyautogui.press("right",interval=.01)
-            
+        print("function end")    
     def my_exit():
         global esc_pressed
         print("Quitting...")
         esc_pressed = True
     def tab_pressed(MoveAfterTab,HighlightonTab):
         nonlocal tabindex
+        time.sleep(.5)
         print("tab pressed")
         for x in range(int(MoveAfterTab[tabindex][0])):
             pyautogui.press("right",interval=.01)
@@ -75,6 +64,7 @@ def HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfter
 
     # Register hotkeys for 'ctrl+alt+h' and 'esc'
     keyboard.add_hotkey(keys, lambda: my_function(PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfterTab,HighlightonTab))
+    
     keyboard.add_hotkey('esc', my_exit)
     
 
@@ -89,8 +79,8 @@ def HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfter
         keyboard.unhook_all()  # Ensure hotkeys are unhooked before exiting 
 
 
-#file = "C:/Users/joshu/Desktop/git/CapstoneRepo/Test Hotkey Files/equationsExamples.txt"
-file = "C:/Users/joshu/Documents/GitHub/CapstoneRepo/Test Hotkey Files/pseudolang2.txt"
+file = "C:/Users/joshu/Desktop/git/CapstoneRepo/Test Hotkey Files/pseudolang2.txt"
+#file = "C:/Users/joshu/Documents/GitHub/CapstoneRepo/Test Hotkey Files/pseudolang2.txt"
 
 tree = Reader.createCommandTree(file)
 info = tree.solve()
