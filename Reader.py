@@ -16,7 +16,9 @@ class CommandTree:
 			if(len(i.data.keys) == 0):
 				i.data.solve()
 
-			listOfHotKeys.append(i.data.keys)
+			theAmazingTuple = (i.data.keys, i)
+
+			listOfHotKeys.append(theAmazingTuple)
 
 		return listOfHotKeys
 
