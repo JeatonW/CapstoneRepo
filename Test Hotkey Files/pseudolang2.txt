@@ -19,3 +19,12 @@ CTRL_L + ALT_L + H::
 	key(TAB, 2):
 		moveCursor(1,0)
 		highlight(1)
+
+CTRL_L + SHIFT_L + Y::
+
+	test = 1
+
+	key(M2, 1):
+		exit
+
+	paste("lmao")

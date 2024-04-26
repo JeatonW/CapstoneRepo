@@ -442,8 +442,21 @@ def createCommandTree(fileName:str) -> CommandTree:
 #me test print stuff
 def MeTest():
 	ct = createCommandTree(input("Input file name: "))
-	for t in ct.solveAndPrint():
-		print(t)
+	hks = ct.getHKList()
+
+	i = 0
+	for hk in hks:
+		print(f"\nthis is hk#{i}: ")
+		
+		(keyArray, treeNode) = hk
+
+		print(keyArray)
+		tuplesOfJustice = treeNode.solve()
+
+		for t in tuplesOfJustice:
+			print(t)
+
+		i = i + 1
 
 #only run if this is main
 if __name__ == '__main__':
