@@ -3,7 +3,7 @@ import time
 import pyautogui
 import keyboard
 from win32api import GetKeyState 
-from win32con import VK_NUMLOCK
+from win32con import VK_NUMLOCK,VK_SHIFT,VK_MENU,VK_CONTROL
 
 #this program is responsible for just blocking the spevified windows keys and allowing the combo on keys
 #function used to format the keys to send to the Hotkeyfunction of 
@@ -30,17 +30,26 @@ def HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfter
     wasNumlockDisabled = False
 
     def my_function(PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfterTab,HighlightonTab):
+        print("have entered the funtion")
         #buffer time just in case, might cause errors if no buffer
         time.sleep(.5)
+
+        print(f"Deubg Log Hotkey Start:\n\tcrtl{GetKeyState(VK_CONTROL)}\n\talt:{GetKeyState(VK_MENU)}\n\tshift:{GetKeyState(VK_SHIFT)}")
+        
+        #reads from the past info of the hotkey and moves it to starting position
+        keyboard.write(PastInfo[0])
+
+        print("typing complete")
+        pyautogui.press("left",presses=(len(PastInfo[0]))- int(StartCurosrInfo[0]),interval=.01)
+        
 
         #we check the state of the numlock key, as is causes weird interactions with the shift keys, if the numlock is on we turn it off and take a note that it was done
         if GetKeyState(VK_NUMLOCK) == 1:
             pyautogui.press('numlock')
             wasNumlockDisabled = True
+        else:
+            wasNumlockDisabled = False
 
-        #reads from the past info of the hotkey and moves it to starting position
-        keyboard.write(PastInfo[0])
-        pyautogui.press("left",presses=(len(PastInfo[0]))- int(StartCurosrInfo[0]),interval=.01)
         
         #selects the initial variable
         keyboard.press('left shift')
@@ -49,8 +58,10 @@ def HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfter
         keyboard.release('right shift')
         keyboard.release('left shift')
 
+        print(f"Deubg Log Hotkey Start:\n\tcrtl{GetKeyState(VK_CONTROL)}\n\talt:{GetKeyState(VK_MENU)}\n\tshift:{GetKeyState(VK_SHIFT)}")
+        print("tab initialized")
         #temporarly adds tab to a hot key to call a function to hook it and read from the rest of the variables
-        keyboard.add_hotkey('tab',lambda:tab_pressed(MoveAfterTab,HighlightonTab,wasNumlockDisabled),suppress=True,trigger_on_release=True)
+        keyboard.add_hotkey('tab',lambda:tab_pressed(MoveAfterTab,HighlightonTab,wasNumlockDisabled),suppress=True, trigger_on_release=True)
 
     #this function is a hot key for the esc key to exit the program
     def my_exit():
@@ -60,6 +71,7 @@ def HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfter
 
     #this function is used to move the key cursor to the proper location after initial selection
     def tab_pressed(MoveAfterTab,HighlightonTab,wasNumlockDisabled):
+        print("tab hit")
         nonlocal tabindex
 
         #checks the length of the tab variable to make sure to only use this if there are tabs left, else we unhook tab to free is from the program.
@@ -81,7 +93,7 @@ def HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfter
 
     #initial registaion of our hotkeys and our esc to quit the program
     #the only known limitaion i know of right now is that for some reason adding suppress=True and trigger_on_release=True do not function properly in this area, even though it works up top
-    keyboard.add_hotkey(keys, lambda: my_function(PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfterTab,HighlightonTab))
+    keyboard.add_hotkey(keys, lambda: my_function(PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfterTab,HighlightonTab),suppress=False,trigger_on_release=False)
     keyboard.add_hotkey('esc', my_exit)
     
 
@@ -129,8 +141,8 @@ def processTabs(tabList):
 
 
 #KNOW ISSUE: eventually this should read the file from the sys.argv cmd line
-#file = "C:/Users/joshu/Desktop/git/CapstoneRepo/Test Hotkey Files/pseudolang2.txt"
-file = "C:/Users/joshu/Documents/GitHub/CapstoneRepo/Test Hotkey Files/pseudolang2.txt"
+file = "C:/Users/joshu/Desktop/git/CapstoneRepo/Test Hotkey Files/pseudolang2.txt"
+#file = "C:/Users/joshu/Documents/GitHub/CapstoneRepo/Test Hotkey Files/pseudolang2.txt"
 
 #creates the tree, solves it, takes the keys, formats keys, and takes the return of tree.solve() and sends them to be unpacked
 tree = Reader.createCommandTree(file)
@@ -143,7 +155,7 @@ PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,tabInfo =  unpacktuple(info)
 MoveAfterTab,HighlightonTab = processTabs(tabInfo)
 
 #starts the main program
-#HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfterTab,HighlightonTab)
+HotkeyAction(keys,PastInfo,HighlightInfo,StartCurosrInfo,mouseInfo,MoveAfterTab,HighlightonTab)
 
 
 #below is a snipit of code that will return the active window
