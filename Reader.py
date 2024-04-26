@@ -454,7 +454,7 @@ def MeTest():
 		print(f"\nthis is hk#{i}: ")
 		
 		#take out the contents of the tuple
-		(keyArray, treeNode) = hk
+		(keyArray, treeBranch) = hk
 
 		#this is the list of keys for a particular hotkey
 		print(keyArray)
