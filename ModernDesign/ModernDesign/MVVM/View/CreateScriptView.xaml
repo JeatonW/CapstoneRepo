@@ -54,18 +54,7 @@
 
             <Border Background="#272537" Grid.Row="0" VerticalAlignment="Top" CornerRadius="10,10,0,0" Height="40" >
 
-                <Grid Margin="10 5 0 5" HorizontalAlignment="Left">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="90*"/>
-                        <ColumnDefinition Width="45*"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Border Background="Transparent" Grid.Column="0" CornerRadius="18,18,18,18">
-                        <TextBlock FontFamily="Consolas Bold" VerticalAlignment="Center" Height="auto" Width="auto" Text="Name of File:" FontSize="18" Foreground="White"/>
-                    </Border>
-                    
-                    <TextBox Margin="10 0 0 0" Name="fileName" Grid.Column="1" Width="200" FontSize="20" TextAlignment="Left" VerticalAlignment="Center"/>
-                </Grid>
+                
             </Border>
         </Grid>
     </Grid>

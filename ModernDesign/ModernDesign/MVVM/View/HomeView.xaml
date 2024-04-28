@@ -43,7 +43,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="If you need help with makeing your own Hotkeys then please click the icon on the right. It will route you to our user manual where we go into exstesive detail on all the ways you can design your very own hotkeys"
+                        <TextBlock Text="If you need help with making your own hotkeys, please click on the icon to be routed to our user manual."
                                    FontSize="16"
                                    TextWrapping="Wrap"
                                    Foreground="White"

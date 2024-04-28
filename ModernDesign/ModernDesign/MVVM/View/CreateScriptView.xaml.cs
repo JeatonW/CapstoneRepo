@@ -25,7 +25,7 @@ namespace ModernDesign.MVVM.View
     /// </summary>
     public partial class CreateScriptView : UserControl
     {
-        private string folderpath = AppDomain.CurrentDomain.BaseDirectory;
+        
         public CreateScriptView()
         {
             InitializeComponent();
@@ -66,7 +66,9 @@ namespace ModernDesign.MVVM.View
                 using (StreamReader reader = process.StandardOutput)
                 {
                     string result = reader.ReadToEnd();
-                    MessageBox.Show(folderpath);
+
+
+                    MessageBox.Show(result);
 
 
 
@@ -78,12 +80,13 @@ namespace ModernDesign.MVVM.View
         {
             
             //ScriptTextBox.Text 
-            string path = $"C:/Users/joshu/Desktop/{fileName.Text}.txt";
+            string path = $"C:/Users/joshu/Desktop/temp.txt";
             File.WriteAllText(path, ScriptTextBox.Text);
            
             
 
-            run_cmd("C:/Users/joshu/Desktop/git/CapstoneRepo/CallFunctions.py", $"C:/Users/joshu/Desktop/{fileName.Text}.txt");
+            run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/CallFunctions.py", $"C:/Users/joshu/Desktop/temp.txt");
+
         }
     }
 }

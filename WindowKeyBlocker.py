@@ -4,6 +4,7 @@ import pyautogui
 import keyboard
 from win32api import GetKeyState 
 from win32con import VK_NUMLOCK,VK_SHIFT,VK_MENU,VK_CONTROL
+import sys
 
 def cSharpWrite(keys):
     with open("cSharp.txt","w") as f:
@@ -184,7 +185,9 @@ def unpacktuple(trees):
 
 #KNOW ISSUE: eventually this should read the file from the sys.argv cmd line
 #file = "C:/Users/joshu/Desktop/git/CapstoneRepo/Test Hotkey Files/pseudolang2.txt"
-file = "C:/Users/joshu/Documents/GitHub/CapstoneRepo/Test Hotkey Files/pseudolang2.txt"
+file = sys.argv[1]
+
+print(file)
 
 #creates the tree, solves it, takes the keys, formats keys, and takes the return of tree.solve() and sends them to be unpacked
 tree = Reader.createCommandTree(file)
