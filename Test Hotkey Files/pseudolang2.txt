@@ -9,9 +9,6 @@ CTRL_L + ALT_L + H::
 	startCursor(4,0)
 	highlight(1)
 
-	key(M1, 1):
-		exit
-
 	key(TAB, 1):
 		moveCursor(10,0)
 		highlight(1)
@@ -21,10 +18,4 @@ CTRL_L + ALT_L + H::
 		highlight(1)
 
 CTRL_L + SHIFT_L + Y::
-
-	test = 1
-
-	key(M2, 1):
-		exit
-
 	paste("lmao")
