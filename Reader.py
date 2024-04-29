@@ -449,7 +449,7 @@ def MeTest():
 	hks = ct.getHKList()
 
 	#unpack each tuple
-	i = 0
+	i = 1
 	for hk in hks:
 		print(f"\nthis is hk#{i}: ")
 		
@@ -460,7 +460,7 @@ def MeTest():
 		print(keyArray)
 
 		#these are branches of the ct that you solve individually now
-		tuplesOfJustice = treeBranch.solve()
+		tuplesOfJustice = treeBranch.solveAndPrint()
 
 		#print the TUPLES
 		for t in tuplesOfJustice:
