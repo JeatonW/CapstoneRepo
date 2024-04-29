@@ -19,3 +19,6 @@ CTRL_L + ALT_L + H::
 
 CTRL_L + SHIFT_L + Y::
 	paste("lmao")
+
+CTRL_L + A::
+	paste("Selected")

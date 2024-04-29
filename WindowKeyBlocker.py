@@ -6,11 +6,6 @@ from win32api import GetKeyState
 from win32con import VK_NUMLOCK,VK_SHIFT,VK_MENU,VK_CONTROL
 import sys
 
-def cSharpWrite(keys):
-    with open("cSharp.txt","w") as f:
-        for key in keys:
-            f.write(key+"\n")
-
 #this program is responsible for just blocking the spevified windows keys and allowing the combo on keys
 #function used to format the keys to send to the Hotkeyfunction of 
 def formatKeys(hotkeys):
@@ -34,7 +29,6 @@ def formatKeys(hotkeys):
             KeyFinal = KeyFinal[:-1]
 
         finalList.append(KeyFinal)
-    cSharpWrite(finalList)
     return finalList
 
 def HotkeyAction(keys,PasteInfo,StartCurosrInfo,HighlightInfo,tabInfo):
