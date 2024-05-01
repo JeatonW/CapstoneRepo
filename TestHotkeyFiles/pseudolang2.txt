@@ -1,10 +1,5 @@
 CTRL_L + ALT_L + H::
 
-	test = 5
-	text = test + test
-
-	stringVar = "this is a test"
-
 	paste("for i in range(0,0):")
 	startCursor(4,0)
 	highlight(1)
@@ -22,3 +17,16 @@ CTRL_L + SHIFT_L + Y::
 
 CTRL_L + A::
 	paste("Selected")
+
+CTRL_L + ALT_L + W::
+	paste("i = 0\n")
+	paste("while(i<5):\n")
+	startCursor(0,0)
+	highlight(1)
+
+	key(TAB, 1):
+		moveCursor(6,1)
+		highlight(1)
+
+	key(TAB, 2):
+		moveCursor(0,1)
