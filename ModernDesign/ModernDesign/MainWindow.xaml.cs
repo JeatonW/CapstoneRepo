@@ -4,7 +4,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace ModernDesign
@@ -28,11 +31,13 @@ namespace ModernDesign
 
         private const int WM_HOTKEY = 0x0312;
 
-        
+        private CancellationTokenSource cancellationTokenSource;
         private List<int> hotkeyIds = new List<int>();
+        private NotifyIcon _notifyIcon;
 
         public MainWindow(){
-            InitializeComponent();   
+            InitializeComponent();
+            _notifyIcon = new NotifyIcon();
         }
        
             
@@ -83,7 +88,7 @@ namespace ModernDesign
                     hotkeyIds.Add(i);
                 }
                 else{
-                    MessageBox.Show("failed to regiseter keys");
+                    System.Windows.MessageBox.Show("failed to regiseter keys");
                 }
                 i++;
             }
@@ -93,6 +98,7 @@ namespace ModernDesign
         {
             base.OnClosed(e);
             UnregisterHotKeys();
+            _notifyIcon.Dispose();
         }
 
         private void UnregisterHotKeys(){
@@ -112,6 +118,7 @@ namespace ModernDesign
         //controls the close button
         private void CloseButton_Click(object sender, RoutedEventArgs e){
             Close();
+            
         }
 
         //controls the minimize button
@@ -121,51 +128,80 @@ namespace ModernDesign
 
         //will open the file dialog window and let you select the file and it will be then sent to our program,
         //it will then be launched with out hotkey program.
-        private void loadScript(object sender, RoutedEventArgs e){
-            OpenFileDialog openFileDialog = new OpenFileDialog{
+        private async void loadScript(object sender, RoutedEventArgs e){
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
                 Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
                 DefaultExt = "txt",
                 Title = "Open Script File"
             };
+
+
+
 
             if (openFileDialog.ShowDialog() == true){
                 try{
                     string filePath = openFileDialog.FileName;
                     string fileContent = File.ReadAllText(filePath);
 
-                    //use the path to your local py file is 
-                    run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/WriteForC#.py", filePath);
-                    
+
+
+                    _notifyIcon = new NotifyIcon();
+                    _notifyIcon.Icon = new System.Drawing.Icon("C:/Users/joshu/Documents/GitHub/CapstoneRepo/ModernDesign/ModernDesign/Resources/Logo.ico");
+                    _notifyIcon.Text = "IDE Hotkeys";
+                    _notifyIcon.Visible = true;
+
+                    _notifyIcon.ContextMenuStrip = new ContextMenuStrip();
+                    _notifyIcon.ContextMenuStrip.Items.Add("Stop Lisiner",null,CancelProcessButton);
+
+                    cancellationTokenSource = new CancellationTokenSource();
+                    await run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/WriteForC#.py", filePath, cancellationTokenSource.Token); //use the path to your local py file is 
                     getkeys();
-                    //use the path to local py file
-                    run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/WindowKeyBlocker.py",filePath);
-                    //MessageBox.Show("keys unregistered");
-                    UnregisterHotKeys();
+
+
+                    await run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/WindowKeyBlocker.py", filePath, cancellationTokenSource.Token); //use the path to local py file
+                    UnregisterHotKeys();//MessageBox.Show("keys unregistered");
                 }
                 catch (Exception ex){
-                    MessageBox.Show("Error reading file: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show("Error reading file: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+
+        private void CancelProcessButton(object sender, EventArgs e)
+        {
+            System.Windows.MessageBox.Show("in cancelation fucntion");
+            
+            cancellationTokenSource?.Cancel();
+            
         }
 
         //this function will take in a program and any arguemtns to run on the cmd line
         //we run it through python and throuh the shell, we also capture the stout and hide the cmd window
-        private void run_cmd(string cmd, string args){
+        private async Task run_cmd(string cmd, string args, CancellationToken cancellationToken){
+            try{
+                ProcessStartInfo start = new ProcessStartInfo();
+                start.FileName = "python";
+                start.Arguments = string.Format("{0} {1}", cmd, args);
+                start.UseShellExecute = false;
+                start.RedirectStandardOutput = true;
+                start.CreateNoWindow = true;
+                using (Process process = Process.Start(start))
+                {
+                    using (StreamReader reader = process.StandardOutput)
+                    {
 
-            ProcessStartInfo start = new ProcessStartInfo();
-            start.FileName = "python";
-            start.Arguments = string.Format("{0} {1}", cmd, args);
-            start.UseShellExecute = false;
-            start.RedirectStandardOutput = true;
-            start.CreateNoWindow = true;
-            using (Process process = Process.Start(start)){
-                using (StreamReader reader = process.StandardOutput){
-                    
-                    string result = reader.ReadToEnd();
-                    //MessageBox.Show(result);
+                        string result = await reader.ReadToEndAsync();
 
+                        //await reader.ReadToEndAsync();
+                    }
                 }
+            } 
+            catch (OperationCanceledException){
+                System.Windows.MessageBox.Show("HotKeys have stopped");
             }
         }
+
     }
 }

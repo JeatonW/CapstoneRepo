@@ -23,69 +23,52 @@ namespace ModernDesign.MVVM.View
     /// <summary>
     /// Interaction logic for CreateScriptView.xaml
     /// </summary>
-    public partial class CreateScriptView : UserControl
-    {
+    public partial class CreateScriptView : UserControl{
         
-        public CreateScriptView()
-        {
+        public CreateScriptView(){
             InitializeComponent();
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
+        //A button Control that will open the file explorer and capture the text box and save it all in txt.
+        private void SaveButton_Click(object sender, RoutedEventArgs e){
             {
-                SaveFileDialog saveFileDialog = new SaveFileDialog
-                {
+                SaveFileDialog saveFileDialog = new SaveFileDialog{
                     Filter = "Script files (*.txt)|*.txt|All files (*.*)|*.*",
                     DefaultExt = "txt"
                 };
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    try
-                    {
+                if (saveFileDialog.ShowDialog() == true){
+                    try{
                         System.IO.File.WriteAllText(saveFileDialog.FileName, ScriptTextBox.Text);
                         MessageBox.Show($"Script '{saveFileDialog.FileName}' saved.", "Info", MessageBoxButton.OK);
                     }
-                    catch (Exception ex)
-                    {
+                    catch (Exception ex){
                         MessageBox.Show($"Error saving script: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
         }
-        private void run_cmd(string cmd, string args)
-        {
 
+        //a helper function used to run python scripts
+        private void run_cmd(string cmd, string args){
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = "python";
             start.Arguments = string.Format("{0} {1}", cmd, args);
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
-            using (Process process = Process.Start(start))
-            {
-                using (StreamReader reader = process.StandardOutput)
-                {
+            using (Process process = Process.Start(start)){
+                using (StreamReader reader = process.StandardOutput){
                     string result = reader.ReadToEnd();
-
-
                     MessageBox.Show(result);
-
-
-
                 }
             }
         }
 
-        private void CheckBox(object sender, RoutedEventArgs e)
-        {
-        
-            //ScriptTextBox.Text 
+        //a helper function that temporarly saves the text box  and send it to a helper python script to verifiy correct compilation and then deletes the file 
+        private void CheckBox(object sender, RoutedEventArgs e){
             string path = $"C:/Users/joshu/Desktop/temp.txt";
             File.WriteAllText(path, ScriptTextBox.Text);
-           
-            
-
             run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/CallFunctions.py", $"C:/Users/joshu/Desktop/temp.txt");
+            File.Delete(path);
 
         }
     }
