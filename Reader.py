@@ -167,6 +167,8 @@ class TreeNode:
 			tupleNameAndVar = ("Move Cursor", self.data.moveX, self.data.moveY)
 			executables.append(tupleNameAndVar)
 
+		print("Compilation successful.")
+
 		return executables
 
 	#solves the entire tree
@@ -251,6 +253,8 @@ class TreeNode:
 		if(self.data.comType == "Move Cursor"):
 			tupleNameAndVar = ("Move Cursor", self.data.moveX, self.data.moveY)
 			executables.append(tupleNameAndVar)
+
+		print("Compilation successful.")
 
 		return executables
 
