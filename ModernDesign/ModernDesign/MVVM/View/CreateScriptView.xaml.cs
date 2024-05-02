@@ -78,7 +78,7 @@ namespace ModernDesign.MVVM.View
 
         private void CheckBox(object sender, RoutedEventArgs e)
         {
-            
+        
             //ScriptTextBox.Text 
             string path = $"C:/Users/joshu/Desktop/temp.txt";
             File.WriteAllText(path, ScriptTextBox.Text);

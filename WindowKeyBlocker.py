@@ -6,6 +6,9 @@ from win32api import GetKeyState
 from win32con import VK_NUMLOCK,VK_SHIFT,VK_MENU,VK_CONTROL
 import sys
 
+
+"\n"
+
 #this program is responsible for just blocking the spevified windows keys and allowing the combo on keys
 #function used to format the keys to send to the Hotkeyfunction of 
 def formatKeys(hotkeys):
@@ -39,7 +42,6 @@ def HotkeyAction(keys,PasteInfo,StartCurosrInfo,HighlightInfo,tabInfo):
 
     def my_function(PasteInfo,HighlightInfo,startcurosrInfo,tabInfo):
         
-        print(PasteInfo,HighlightInfo,startcurosrInfo,tabInfo)
         
         #buffer time just in case, might cause errors if no buffer
         time.sleep(.5)
@@ -49,9 +51,6 @@ def HotkeyAction(keys,PasteInfo,StartCurosrInfo,HighlightInfo,tabInfo):
             keyboard.write(PasteInfo)
 
         if (PasteInfo!=[])and(startcurosrInfo!=[]):
-            print(len(PasteInfo[0]))
-            print(int(startcurosrInfo[0]))
-            print((len(PasteInfo[0])) - int(startcurosrInfo[0]))
             pyautogui.press("left",presses=(len(PasteInfo[0])) - int(startcurosrInfo[0]),interval=.01)
         
         #we check the state of the numlock key, as is causes weird interactions with the shift keys, if the numlock is on we turn it off and take a note that it was done
@@ -173,7 +172,7 @@ def unpacktuple(trees):
         startCursor.append(startCursorInfo)
         initialHighligh.append(initialHighlighInfo)
 
-    print(f"{paste}\n{startCursor}\n{initialHighligh}\n{tab}")
+    print(f"HotKey Info:    {paste}\n    \t\t{startCursor}\n \t\t{initialHighligh}\n \t\t{tab}")
     return paste,startCursor,initialHighligh,tab
 
 
@@ -181,7 +180,6 @@ def unpacktuple(trees):
 #file = "C:/Users/joshu/Desktop/git/CapstoneRepo/Test Hotkey Files/pseudolang2.txt"
 file = sys.argv[1]
 
-print(file)
 
 #creates the tree, solves it, takes the keys, formats keys, and takes the return of tree.solve() and sends them to be unpacked
 tree = Reader.createCommandTree(file)
@@ -197,6 +195,5 @@ keys = formatKeys(keylist)
 
 p,s,i,t = unpacktuple(treelist)
 
-print(keys)
 #starts the main program
 HotkeyAction(keys,p,s,i,t)
