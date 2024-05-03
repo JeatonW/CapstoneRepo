@@ -6,7 +6,7 @@ import sys
 
 def CallFunction(file):
 	tree = Reader.createCommandTree(file)
-	tree.solveAndPrint()
+	tree.solve()
 	
 
 

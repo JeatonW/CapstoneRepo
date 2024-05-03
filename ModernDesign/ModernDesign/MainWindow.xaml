@@ -48,11 +48,16 @@
                         <ColumnDefinition Width="45"/>
                         <ColumnDefinition Width="45"/>
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="1" FontSize="28" Click="CloseButton_Click" Name="CloseButton" Content="X" Width="45" Background="Transparent" BorderBrush="{x:Null}" />
+                    <Button Grid.Column="1" Click="CloseButton_Click" Name="CloseButton" Width="45" Background="Transparent" BorderBrush="{x:Null}">
+                        <StackPanel>
+                            <Image Source="Images/CloseIcon.png"/>
+                        </StackPanel>
+                    </Button>
 
-
-                    <Button Grid.Column="0" FontSize="50" Click="Minimize_Click" Name="MinimizeButton" Background="Transparent" BorderBrush="{x:Null}">
-                        <TextBlock Grid.Column="0" Width="45 " Background="Transparent" Text="&#x0304;" TextAlignment="Center" TextWrapping="Wrap"/>
+                    <Button Grid.Column="0" Click="Minimize_Click" Name="MinimizeButton" Background="Transparent" BorderBrush="{x:Null}">
+                        <StackPanel>
+                            <Image Source="Images/Minimize.png" Stretch="Fill"/>
+                        </StackPanel>
                     </Button>
 
                 </Grid>
