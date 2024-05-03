@@ -10,19 +10,15 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 
-namespace ModernDesign
-{
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+namespace ModernDesign{
     public partial class MainWindow : Window{
-
         [DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
 
         [DllImport("user32.dll")]
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
+        //key modifiers
         private const int MOD_NONE = 0x0000;
         private const int MOD_ALT = 0x0001;
         private const int MOD_CONTROL = 0x0002;
@@ -43,39 +39,24 @@ namespace ModernDesign
             
             //this function will take the file of hotkeys that are on each line, 
             private void getkeys(){
-
             //change this to the location you decide in the WriteForC#
             string[] file = File.ReadAllLines("C:/Users/joshu/Desktop/cSharp.txt");
             List<string> lines = new List<string>();
             List<List<int>> keys = new List<List<int>>();
-
-            
             foreach (string line in file){
                 List<int> key = new List<int>();
                 string[] parts = line.Split('+');
                 foreach (string part in parts){
-                    if (part == "left ctrl" || part =="right ctrl" ){
-                        key.Add(MOD_CONTROL);
-                    }
-                    else if (part == "left shift" || part == "right shift"){
-                        key.Add(MOD_SHIFT);
-                    }
-                    else if (part =="left alt" || part == "right alt"){
-                        key.Add(MOD_ALT);
-                    }
-                    else{
-                        char character = part.ToCharArray()[0];
-                        key.Add(((byte)character));
-                    }
+                    if (part == "left ctrl" || part =="right ctrl" ){key.Add(MOD_CONTROL);}
+                    else if (part == "left shift" || part == "right shift"){key.Add(MOD_SHIFT);}
+                    else if (part =="left alt" || part == "right alt"){key.Add(MOD_ALT);}
+                    else{char character = part.ToCharArray()[0]; key.Add(((byte)character));}
                 }
                 keys.Add(key);
-
                 lines.AddRange(parts);
             }
-
             int i = 1;
-            foreach(List<int> hotkey in keys)
-            {
+            foreach(List<int> hotkey in keys){
                 bool success;
                 if (hotkey.Count > 2){
                     success = RegisterHotKey(IntPtr.Zero, i, hotkey[0] | hotkey[1], hotkey[2]-32);
@@ -99,6 +80,9 @@ namespace ModernDesign
             base.OnClosed(e);
             UnregisterHotKeys();
             _notifyIcon.Dispose();
+            _notifyIcon = null;
+            
+            
         }
 
         private void UnregisterHotKeys(){
@@ -172,31 +156,30 @@ namespace ModernDesign
         private void CancelProcessButton(object sender, EventArgs e)
         {
             System.Windows.MessageBox.Show("in cancelation fucntion");
-            
             cancellationTokenSource?.Cancel();
             
         }
 
         //this function will take in a program and any arguemtns to run on the cmd line
         //we run it through python and throuh the shell, we also capture the stout and hide the cmd window
-        private async Task run_cmd(string cmd, string args, CancellationToken cancellationToken){
+        private async Task run_cmd(string cmd, string args, CancellationToken cancellationToken){  
             try{
                 ProcessStartInfo start = new ProcessStartInfo();
                 start.FileName = "python";
                 start.Arguments = string.Format("{0} {1}", cmd, args);
                 start.UseShellExecute = false;
                 start.RedirectStandardOutput = true;
-                start.CreateNoWindow = true;
+                start.CreateNoWindow = false;
                 using (Process process = Process.Start(start))
                 {
                     using (StreamReader reader = process.StandardOutput)
                     {
-
                         string result = await reader.ReadToEndAsync();
-
+         
                         //await reader.ReadToEndAsync();
                     }
                 }
+                
             } 
             catch (OperationCanceledException){
                 System.Windows.MessageBox.Show("HotKeys have stopped");
