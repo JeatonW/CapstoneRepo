@@ -134,11 +134,11 @@ namespace ModernDesign
                     string fileContent = File.ReadAllText(filePath);
 
                     //use the path to your local py file is 
-                    run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/WriteForC#.py", filePath);
+                    run_cmd("C:/Users/joshu/Desktop/git/CapstoneRepo/WriteForC#.py", filePath);
                     
                     getkeys();
                     //use the path to local py file
-                    run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/WindowKeyBlocker.py",filePath);
+                    run_cmd("C:/Users/joshu/Desktop/git/CapstoneRepo/WindowKeyBlocker.py", filePath);
                     //MessageBox.Show("keys unregistered");
                     UnregisterHotKeys();
                 }
@@ -162,7 +162,7 @@ namespace ModernDesign
                 using (StreamReader reader = process.StandardOutput){
                     
                     string result = reader.ReadToEnd();
-                    //MessageBox.Show(result);
+                    MessageBox.Show(result);
 
                 }
             }
