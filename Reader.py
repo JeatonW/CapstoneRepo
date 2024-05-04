@@ -23,9 +23,17 @@ class CommandTree:
 		return listOfHotKeys
 
 	def solve(self):
-		return self.head.solve()
+		s = self.head.solve()
+		if(s == ""):
+			return "Compilation successful."
+		else:
+			return s
 	def solveAndPrint(self):
-		return self.head.solveAndPrint()
+		s = self.head.solveAndPrint()
+		if(s == ""):
+			return "Compilation successful."
+		else:
+			return s
 
 class TreeNode:
 
@@ -167,8 +175,6 @@ class TreeNode:
 			tupleNameAndVar = ("Move Cursor", self.data.moveX, self.data.moveY)
 			executables.append(tupleNameAndVar)
 
-		print("Compilation successful.")
-
 		return executables
 
 	#solves the entire tree
@@ -253,8 +259,6 @@ class TreeNode:
 		if(self.data.comType == "Move Cursor"):
 			tupleNameAndVar = ("Move Cursor", self.data.moveX, self.data.moveY)
 			executables.append(tupleNameAndVar)
-
-		print("Compilation successful.")
 
 		return executables
 
