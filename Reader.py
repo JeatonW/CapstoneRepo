@@ -24,16 +24,14 @@ class CommandTree:
 
 	def solve(self):
 		s = self.head.solve()
-		if(s == ""):
-			return "Compilation successful."
-		else:
-			return s
+		if(not isinstance(s, str)):
+			print("\nCompilation successful.")
+		return s
 	def solveAndPrint(self):
 		s = self.head.solveAndPrint()
-		if(s == ""):
-			return "Compilation successful."
-		else:
-			return s
+		if(not isinstance(s, str)):
+			print("\nCompilation successful.")
+		return s
 
 class TreeNode:
 
