@@ -31,16 +31,16 @@ namespace ModernDesign{
         private List<int> hotkeyIds = new List<int>();
         private NotifyIcon _notifyIcon;
 
+        private Process process;
+
+
+
         public MainWindow(){
             InitializeComponent();
             _notifyIcon = new NotifyIcon();
         }
-       
-            
-            //this function will take the file of hotkeys that are on each line, 
             private void getkeys(){
-            //change this to the location you decide in the WriteForC#
-            string[] file = File.ReadAllLines("C:/Users/joshu/Desktop/cSharp.txt");
+            string[] file = File.ReadAllLines("C:/Users/joshu/Desktop/cSharp.txt");//change this to the location you decide in the WriteForC#
             List<string> lines = new List<string>();
             List<List<int>> keys = new List<List<int>>();
             foreach (string line in file){
@@ -58,19 +58,10 @@ namespace ModernDesign{
             int i = 1;
             foreach(List<int> hotkey in keys){
                 bool success;
-                if (hotkey.Count > 2){
-                    success = RegisterHotKey(IntPtr.Zero, i, hotkey[0] | hotkey[1], hotkey[2]-32);
-                }
-                else{
-                    success = RegisterHotKey(IntPtr.Zero, i, hotkey[0], hotkey[1]-32);
-                }
-                
-                if (success){
-                    hotkeyIds.Add(i);
-                }
-                else{
-                    System.Windows.MessageBox.Show("failed to regiseter keys");
-                }
+                if (hotkey.Count > 2){success = RegisterHotKey(IntPtr.Zero, i, hotkey[0] | hotkey[1], hotkey[2]-32);}
+                else{success = RegisterHotKey(IntPtr.Zero, i, hotkey[0], hotkey[1]-32);}
+                if (success){hotkeyIds.Add(i);}
+                else{System.Windows.MessageBox.Show("failed to regiseter keys");}
                 i++;
             }
         }
@@ -80,9 +71,7 @@ namespace ModernDesign{
             base.OnClosed(e);
             UnregisterHotKeys();
             _notifyIcon.Dispose();
-            _notifyIcon = null;
-            
-            
+            if(process != null && !process.HasExited){ process.Kill();}
         }
 
         private void UnregisterHotKeys(){
@@ -101,8 +90,7 @@ namespace ModernDesign{
 
         //controls the close button
         private void CloseButton_Click(object sender, RoutedEventArgs e){
-            Close();
-            
+            Close();   
         }
 
         //controls the minimize button
@@ -120,9 +108,6 @@ namespace ModernDesign{
                 Title = "Open Script File"
             };
 
-
-
-
             if (openFileDialog.ShowDialog() == true){
                 try{
                     string filePath = openFileDialog.FileName;
@@ -138,12 +123,14 @@ namespace ModernDesign{
                     _notifyIcon.ContextMenuStrip = new ContextMenuStrip();
                     _notifyIcon.ContextMenuStrip.Items.Add("Stop Lisiner",null,CancelProcessButton);
 
-                    cancellationTokenSource = new CancellationTokenSource();
-                    await run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/WriteForC#.py", filePath, cancellationTokenSource.Token); //use the path to your local py file is 
+                    this.Visibility = Visibility.Collapsed;
+                    _notifyIcon.ShowBalloonTip(3000,"IDE Hotkeys", "Hotkeys Activated",ToolTipIcon.Info);
+
+                    await run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/WriteForC#.py", filePath); //use the path to your local py file is 
                     getkeys();
 
 
-                    await run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/WindowKeyBlocker.py", filePath, cancellationTokenSource.Token); //use the path to local py file
+                    await run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/WindowKeyBlocker.py", filePath); //use the path to local py file
                     UnregisterHotKeys();//MessageBox.Show("keys unregistered");
                 }
                 catch (Exception ex){
@@ -153,39 +140,27 @@ namespace ModernDesign{
         }
 
 
-        private void CancelProcessButton(object sender, EventArgs e)
-        {
-            System.Windows.MessageBox.Show("in cancelation fucntion");
-            cancellationTokenSource?.Cancel();
-            
+        private void CancelProcessButton(object sender, EventArgs e){
+            if (process != null && !process.HasExited) { process.Kill(); }
+            this.Visibility = Visibility.Visible;
+            _notifyIcon.Dispose();
         }
 
         //this function will take in a program and any arguemtns to run on the cmd line
         //we run it through python and throuh the shell, we also capture the stout and hide the cmd window
-
-        private async Task run_cmd(string cmd, string args, CancellationToken cancellationToken){  
-            try{
+        private async Task run_cmd(string cmd, string args){  
                 ProcessStartInfo start = new ProcessStartInfo();
                 start.FileName = "python";
                 start.Arguments = string.Format("{0} {1}", cmd, args);
                 start.UseShellExecute = false;
                 start.RedirectStandardOutput = true;
-                start.CreateNoWindow = false;
-                using (Process process = Process.Start(start))
-                {
-                    using (StreamReader reader = process.StandardOutput)
-                    {
-                        string result = await reader.ReadToEndAsync();
-         
-                        //await reader.ReadToEndAsync();
-                    }
-                }
-                
-            } 
-            catch (OperationCanceledException){
-                System.Windows.MessageBox.Show("HotKeys have stopped");
+                start.CreateNoWindow = true;
+                process = Process.Start(start);
+                Task pythonexit = Task.Run(() => process.WaitForExit());
+                await pythonexit;
+            
             }
         }
 
     }
-}
+
