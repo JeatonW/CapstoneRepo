@@ -35,11 +35,10 @@ def HotkeyAction(keys,Info):
     esc_pressed = False
     wasNumlockDisabled = False
     #a list that inserts a true value for each home press, so when you stay on a certain line. it will no longer press home.
-    homePressedOnSameLine = []
-    def my_function(Info,homePressedOnSameLine):
+    def my_function(Info):
         time.sleep(.5) #buffer time just in case, might cause errors if no buffer
         lineNumber = 0
-
+        homePressedOnSameLine = []
         if GetKeyState(VK_NUMLOCK) == 1:
             pyautogui.press('numlock')
             wasNumlockDisabled = True
@@ -131,7 +130,7 @@ def HotkeyAction(keys,Info):
     #initial registaion of our hotkeys and our esc to quit the program
     #the only known limitaion i know of right now is that for some reason adding suppress=True and trigger_on_release=True do not function properly in this area, even though it works up top
     for key in keys:
-        keyboard.add_hotkey(key, lambda I = Info[keys.index(key)], h = homePressedOnSameLine: my_function(I,h))
+        keyboard.add_hotkey(key, lambda I = Info[keys.index(key)]: my_function(I))
     
 
     keyboard.add_hotkey('esc', my_exit)
