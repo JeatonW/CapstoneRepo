@@ -89,17 +89,22 @@ def HotkeyAction(keys,Info):
     
     #helper function for managing moving the cursor around
     def moveline(x,y,lineNumber,homePressedOnSameLine):
-        print(f"X:{x}\nY:{y}\n{lineNumber}")
+        #print(f"X:{x}\nY:{y}\n{lineNumber}")
 
         if int(y) == lineNumber:
+            try:
 
-            if homePressedOnSameLine[lineNumber]:
-                pyautogui.press("right",int(x),interval=.01)
-            else:
-                pyautogui.press("right",int(x),interval=.01)
-                pyautogui.press("home")
+                if homePressedOnSameLine[lineNumber]:
+                    pyautogui.press("right",int(x),interval=.01)
+                else:
+                    pyautogui.press("right",int(x),interval=.01)
+                    pyautogui.press("home")
+                    homePressedOnSameLine.insert(lineNumber,True)
+            except:
                 homePressedOnSameLine.insert(lineNumber,True)
-            print(f"X:{x}\nY:{y}\n{lineNumber}\nHomeBool:{homePressedOnSameLine}")
+                pyautogui.press("home")
+                moveline(x,y,lineNumber,homePressedOnSameLine)
+            #print(f"X:{x}\nY:{y}\n{lineNumber}\nHomeBool:{homePressedOnSameLine}")
             return lineNumber, homePressedOnSameLine
         else:
             changeRowNumber = lineNumber - int(y)
