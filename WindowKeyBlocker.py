@@ -6,9 +6,6 @@ from win32api import GetKeyState
 from win32con import VK_NUMLOCK,VK_SHIFT,VK_MENU,VK_CONTROL
 import sys
 
-
-"\n"
-
 #this program is responsible for just blocking the spevified windows keys and allowing the combo on keys
 #function used to format the keys to send to the Hotkeyfunction of 
 def formatKeys(hotkeys):
@@ -26,52 +23,107 @@ def formatKeys(hotkeys):
                 KeyFinal+= (side+" "+keysplit[0].lower()+"+")
             else:
                 KeyFinal+= key.lower()
-
         #checks for a plus at the end
         if KeyFinal[-1] == "+":
             KeyFinal = KeyFinal[:-1]
-
         finalList.append(KeyFinal)
     return finalList
 
-def HotkeyAction(keys,PasteInfo,StartCurosrInfo,HighlightInfo,tabInfo):
+
+def HotkeyAction(keys,Info):
     #adds a flag and tabindex to keep track of the escape key to exit the program and to keep track of tabs,also a numlock flag
     esc_pressed = False
-    tabindex = 0
     wasNumlockDisabled = False
-
-    def my_function(PasteInfo,HighlightInfo,startcurosrInfo,tabInfo):
-        
-        
-        #buffer time just in case, might cause errors if no buffer
-        time.sleep(.5)
-
-        if PasteInfo != []:
-            #reads from the past info of the hotkey and moves it to starting position
-            keyboard.write(PasteInfo)
-
-        if (PasteInfo!=[])and(startcurosrInfo!=[]):
-            pyautogui.press("left",presses=(len(PasteInfo[0])) - int(startcurosrInfo[0]),interval=.01)
-        
-        #we check the state of the numlock key, as is causes weird interactions with the shift keys, if the numlock is on we turn it off and take a note that it was done
+    #a list that inserts a true value for each home press, so when you stay on a certain line. it will no longer press home.
+    def my_function(Info):
+        time.sleep(.5) #buffer time just in case, might cause errors if no buffer
+        lineNumber = 0
+        homePressedOnSameLine = []
         if GetKeyState(VK_NUMLOCK) == 1:
             pyautogui.press('numlock')
             wasNumlockDisabled = True
         else:
             wasNumlockDisabled = False
 
-        if HighlightInfo != []:
-            #selects the initial variable
-            keyboard.press('left shift')
-            keyboard.press('right shift')
-            pyautogui.press("right",presses=int(HighlightInfo[0]),interval=.01)
-            keyboard.release('right shift')
-            keyboard.release('left shift')
 
-        if tabInfo != []:
-            #temporarly adds tab to a hot key to call a function to hook it and read from the rest of the variables
-            keyboard.add_hotkey('tab',lambda:tab_pressed(tabInfo,wasNumlockDisabled),suppress=True, trigger_on_release=True)
-        
+        for keyword in Info:
+            print(keyword)
+            print(f"Line:{lineNumber}")
+            if keyword[0] == "Paste":
+                if r"\n" == keyword[1][-2:]:
+                    lineNumber += 1
+                    keyboard.write(keyword[1][:-2])
+                    keyboard.press("enter")
+                else:
+                    keyboard.write(keyword[1])
+            
+            if keyword[0] == "Start Cursor":
+                lineNumber,homePressedOnSameLine = moveline(keyword[1],keyword[2],lineNumber,homePressedOnSameLine)
+
+            if keyword[0] == "Highlight":
+                #selects the initial variable
+                keyboard.press('left shift')
+                keyboard.press('right shift')
+                pyautogui.press("right",presses=int(keyword[1]),interval=.01)
+                keyboard.release('right shift')
+                keyboard.release('left shift')
+
+            if keyword[0] == "Key Press":
+                if keyword[1] == "TAB":
+                    tabInfo = keyword[3]
+                    keyboard.wait('tab',suppress=True,trigger_on_release=True)
+                    lineNumber,homePressedOnSameLine = moveline(tabInfo[0][1],tabInfo[0][2],lineNumber,homePressedOnSameLine)
+
+                    #highlight
+                    keyboard.press('left shift')
+                    keyboard.press('right shift')
+                    pyautogui.press("right",presses=int(tabInfo[1][1]),interval=.01)
+                    keyboard.release('right shift')
+                    keyboard.release('left shift')
+            
+        print(wasNumlockDisabled)
+        if wasNumlockDisabled:
+                print("turning numlock back on" )
+                pyautogui.press('numlock')
+        print("end of instructions...")
+    
+    #helper function for managing moving the cursor around
+    def moveline(x,y,lineNumber,homePressedOnSameLine):
+        #print(f"X:{x}\nY:{y}\n{lineNumber}")
+
+        if int(y) == lineNumber:
+            try:
+
+                if homePressedOnSameLine[lineNumber]:
+                    pyautogui.press("right",int(x),interval=.01)
+                else:
+                    pyautogui.press("right",int(x),interval=.01)
+                    pyautogui.press("home")
+                    homePressedOnSameLine.insert(lineNumber,True)
+            except:
+                homePressedOnSameLine.insert(lineNumber,True)
+                pyautogui.press("home")
+                moveline(x,y,lineNumber,homePressedOnSameLine)
+            #print(f"X:{x}\nY:{y}\n{lineNumber}\nHomeBool:{homePressedOnSameLine}")
+            return lineNumber, homePressedOnSameLine
+        else:
+            changeRowNumber = lineNumber - int(y)
+            if changeRowNumber > 0:
+                pyautogui.press("up",changeRowNumber,interval=.01)
+                pyautogui.press("home")
+                pyautogui.press("right",int(x),interval=.01)
+                lineNumber -=changeRowNumber
+                homePressedOnSameLine.insert(lineNumber,True)
+                return lineNumber,homePressedOnSameLine
+            else:
+                changeRowNumber = changeRowNumber * -1
+                pyautogui.press("down",changeRowNumber,interval=.01)
+                lineNumber += changeRowNumber
+                pyautogui.press("home")
+                pyautogui.press("right",int(x),interval=.01)
+                homePressedOnSameLine.insert(lineNumber,True)
+                return lineNumber,homePressedOnSameLine
+
 
     #this function is a hot key for the esc key to exit the program
     def my_exit():
@@ -79,38 +131,15 @@ def HotkeyAction(keys,PasteInfo,StartCurosrInfo,HighlightInfo,tabInfo):
         print("Quitting...")
         esc_pressed = True
 
-    #this function is used to move the key cursor to the proper location after initial selection
-    def tab_pressed(tabInfo,wasNumlockDisabled):
-        nonlocal tabindex
-        #checks the length of the tab variable to make sure to only use this if there are tabs left, else we unhook tab to free is from the program.
-        if tabindex < len(tabInfo):
-            time.sleep(.5)
-            pyautogui.press("right",presses=int(tabInfo[tabindex][0]),interval=.01)
-
-            keyboard.press('left shift')
-            keyboard.press('right shift')
-            pyautogui.press("right",presses=int(tabInfo[tabindex][1]),interval=.01)
-            keyboard.release('right shift')
-            keyboard.release('left shift')
-            tabindex+=1
-        #after all the tabs have been gone through it unhooks tab and checks if we diabled numlock at the start and will re-enable it 
-        else:
-            tabindex = 0
-            print("unhooking tab")
-            keyboard.remove_hotkey('tab')
-            if wasNumlockDisabled:
-                pyautogui.press('numlock')  
-
+   
     #initial registaion of our hotkeys and our esc to quit the program
     #the only known limitaion i know of right now is that for some reason adding suppress=True and trigger_on_release=True do not function properly in this area, even though it works up top
     for key in keys:
-        keyboard.add_hotkey(key, lambda p = PasteInfo[keys.index(key)], h = HighlightInfo[keys.index(key)],s = StartCurosrInfo[keys.index(key)],t = tabInfo[keys.index(key)]: my_function(p,h,s,t))
+        keyboard.add_hotkey(key, lambda I = Info[keys.index(key)]: my_function(I))
     
 
     keyboard.add_hotkey('esc', my_exit)
-    
 
-    #a try funtion that will hold a subprocces and see if esc was pressed, if Ctrl+c is click it catches the exception and quits the program and unhooks all keys
     try:
         while True:
             keyboard.wait('esc')
@@ -120,68 +149,21 @@ def HotkeyAction(keys,PasteInfo,StartCurosrInfo,HighlightInfo,tabInfo):
     finally:
         keyboard.unhook_all()
 
-#unpacks the tuples from the main program,
-#KNOWN ISSUE: some tuples get left with weird commas at the end, will come pack to unpack more effectivly
-def unpacktuple(trees):
-    #stores the solved trees
+def unpackTrees(trees):
     hotkey = []
-
-    #master list for every hotkey
-    paste = []
-    startCursor = []
-    initialHighligh = []
-    tab = []
-
-    #solves tree and puts into a info list
     for tree in trees:
         hotkey.append(tree.solve())
-
-    #steps into each tree
-    for info in hotkey:
-        #temps to be appeneded to master lists
-        #this is used to line up with the index of the hotkey.
-        pasteInfo = []
-        startCursorInfo = []
-        initialHighlighInfo = []
-
-        #for of [move,highlight]
-        numberofTabs = []
-
-        #steps into all the info for each tree, and appends the corisponding keyword with its data type list
-        for keyword in info:
-            if keyword[0] == "Paste":
-                pasteInfo.append(keyword[1])
-            if keyword[0] == "Start Cursor":
-                startCursorInfo.append(keyword[1])
-            if keyword[0] == "Highlight":
-                initialHighlighInfo.append(keyword[1])
-            if keyword[0] == "Key Press":
-                if keyword[1] == "TAB":
-                    #trims the tab section
-                    _tab = keyword[3:][0]
-                    for action in _tab:
-                        if action[0] == "Move Cursor":
-                            move = action[1]
-                        if action[0] == "Highlight":
-                            highlight = action[1]
-                    #packs the tab pair into its own list, that gets appended to the currnet hotekys tab list
-                    numberofTabs.append([move,highlight])
-                    
-        tab.append(numberofTabs)
-        paste.append(pasteInfo)
-        startCursor.append(startCursorInfo)
-        initialHighligh.append(initialHighlighInfo)
-
-    print(f"HotKey Info:    {paste}\n    \t\t{startCursor}\n \t\t{initialHighligh}\n \t\t{tab}")
-    return paste,startCursor,initialHighligh,tab
+    return hotkey
 
 
-#KNOW ISSUE: eventually this should read the file from the sys.argv cmd line
-#file = "C:/Users/joshu/Desktop/git/CapstoneRepo/Test Hotkey Files/pseudolang2.txt"
+
+
+
+
+
+
+######## MAIN ##############
 file = sys.argv[1]
-
-
-#creates the tree, solves it, takes the keys, formats keys, and takes the return of tree.solve() and sends them to be unpacked
 tree = Reader.createCommandTree(file)
 HKList = tree.getHKList()
 
@@ -193,7 +175,7 @@ for hotkey in HKList:
 
 keys = formatKeys(keylist) 
 
-p,s,i,t = unpacktuple(treelist)
+info = unpackTrees(treelist)
 
 #starts the main program
-HotkeyAction(keys,p,s,i,t)
+HotkeyAction(keys,info)
