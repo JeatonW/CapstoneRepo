@@ -489,9 +489,9 @@ class Highlight(FormattedCommand):
 		super().__init__("Highlight", originalCodeLine)
 
 		#remove spaces from the line of code
-		originalCodeLine = originalCodeLine.replace(" ", "")
+		self.originalCodeLine = self.originalCodeLine.replace(" ", "")
 
-		self.checkSyntax(originalCodeLine)
+		self.checkSyntax(self.originalCodeLine)
 		self.distance = None
 
 	def checkSyntax(self, originalCodeLine:str):
@@ -515,9 +515,9 @@ class StartCursor(FormattedCommand):
 		super().__init__("Start Cursor", originalCodeLine)
 
 		#remove spaces from the line of code
-		originalCodeLine = originalCodeLine.replace(" ", "")
+		self.originalCodeLine = self.originalCodeLine.replace(" ", "")
 
-		self.checkSyntax(originalCodeLine)
+		self.checkSyntax(self.originalCodeLine)
 		self.startX = self.startY = None
 
 	def checkSyntax(self, originalCodeLine:str):
@@ -541,7 +541,11 @@ class MoveCursor(FormattedCommand):
 
 	def __init__(self, originalCodeLine:str):
 		super().__init__("Move Cursor", originalCodeLine)
-		self.checkSyntax(originalCodeLine)
+
+		#remove spaces from the line of code
+		self.originalCodeLine = self.originalCodeLine.replace(" ", "")
+
+		self.checkSyntax(self.originalCodeLine)
 		self.moveX = self.moveY = None
 
 	def checkSyntax(self, originalCodeLine:str):
