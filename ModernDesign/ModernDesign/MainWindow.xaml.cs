@@ -40,7 +40,7 @@ namespace ModernDesign{
             _notifyIcon = new NotifyIcon();
         }
             private void getkeys(){
-            string[] file = File.ReadAllLines("C:/Users/joshu/Desktop/cSharp.txt");//change this to the location you decide in the WriteForC#
+            string[] file = File.ReadAllLines("C:/Users/hager/Documents/cSharp.txt");//change this to the location you decide in the WriteForC#
             List<string> lines = new List<string>();
             List<List<int>> keys = new List<List<int>>();
             foreach (string line in file){
@@ -61,7 +61,7 @@ namespace ModernDesign{
                 if (hotkey.Count > 2){success = RegisterHotKey(IntPtr.Zero, i, hotkey[0] | hotkey[1], hotkey[2]-32);}
                 else{success = RegisterHotKey(IntPtr.Zero, i, hotkey[0], hotkey[1]-32);}
                 if (success){hotkeyIds.Add(i);}
-                else{System.Windows.MessageBox.Show("failed to regiseter keys");}
+                else{System.Windows.MessageBox.Show("failed to register keys");}
                 i++;
             }
         }
@@ -116,21 +116,21 @@ namespace ModernDesign{
 
 
                     _notifyIcon = new NotifyIcon();
-                    _notifyIcon.Icon = new System.Drawing.Icon("C:/Users/joshu/Documents/GitHub/CapstoneRepo/ModernDesign/ModernDesign/Resources/Logo.ico");
+                    _notifyIcon.Icon = new System.Drawing.Icon("C:/Users/hager/Documents/GitHub/CapstoneRepo/ModernDesign/ModernDesign/Resources/Logo.ico");
                     _notifyIcon.Text = "IDE Hotkeys";
                     _notifyIcon.Visible = true;
 
                     _notifyIcon.ContextMenuStrip = new ContextMenuStrip();
-                    _notifyIcon.ContextMenuStrip.Items.Add("Stop Lisiner",null,CancelProcessButton);
+                    _notifyIcon.ContextMenuStrip.Items.Add("Stop Listener",null,CancelProcessButton);
 
                     this.Visibility = Visibility.Collapsed;
                     _notifyIcon.ShowBalloonTip(3000,"IDE Hotkeys", "Hotkeys Activated",ToolTipIcon.Info);
 
-                    await run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/WriteForC#.py", filePath); //use the path to your local py file is 
+                    await run_cmd("C:/Users/hager/Documents/GitHub/CapstoneRepo/WriteForC#.py", filePath); //use the path to your local py file is 
                     getkeys();
 
 
-                    await run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/WindowKeyBlocker.py", filePath); //use the path to local py file
+                    await run_cmd("C:/Users/hager/Documents/GitHub/CapstoneRepo/WindowKeyBlocker.py", filePath); //use the path to local py file
                     UnregisterHotKeys();//MessageBox.Show("keys unregistered");
                 }
                 catch (Exception ex){

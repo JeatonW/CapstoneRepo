@@ -1,0 +1,11 @@
+CTRL_L + F::
+	paste("for i in x:\n")
+	startCursor(4,0)
+	highlight(1)
+
+	key(TAB, 1):
+		moveCursor(4, 0)
+		highlight(1)
+
+	key(TAB, 2):
+		moveCursor(0, 1)

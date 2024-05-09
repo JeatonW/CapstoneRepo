@@ -4,7 +4,7 @@ import sys
 
 
 def cSharpWrite(keys):
-    with open("C:/Users/joshu/Desktop/cSharp.txt","w") as f:
+    with open("C:/Users/hager/Documents/cSharp.txt","w") as f:
         for key in keys:
             f.write(key+"\n")
 

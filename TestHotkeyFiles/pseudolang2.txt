@@ -12,21 +12,109 @@ CTRL_L + ALT_L + H::
 		moveCursor(1,0)
 		highlight(1)
 
-CTRL_L + SHIFT_L + Y::
-	paste("lmao")
-
 CTRL_L + A::
-	paste("Selected")
+	paste("Does not Select All")
+
+CTRL_L + ALT_L + K::
+	for(3):
+		paste("GO DAWGS\n")
+
+CTRL_L + ALT_L + L::
+	i=0
+	while(i<3):
+		paste("Download IDE HOTKEYS\n")
+		i = i+1
+		
 
 CTRL_L + ALT_L + W::
 	paste("i = 0\n")
 	paste("while(i<5):\n")
 	startCursor(0,0)
 	highlight(1)
+
 	key(TAB, 1):
-		moveCursor(6,1)
+		moveCursor(3,0)
 		highlight(1)
 
 	key(TAB, 2):
+		moveCursor(6,1)
+		highlight(1)
+
+	key(TAB, 3):
 		moveCursor(0,1)
 		highlight(1)
+	
+	key(TAB, 4):
+		moveCursor(0,1)
+		highlight(1)
+
+	key(TAB, 5):
+		moveCursor(2,1)
+
+
+CTRL_L + ALT_L + J::
+	paste("for (int i = 0; i < 0; i++) {\n")
+	paste("\n")
+	paste("}")
+	startCursor(5,0) 
+	highlight(3)
+	
+	key(TAB,1):
+		moveCursor(1,0) 
+		highlight(1)
+
+	key(TAB,2):
+		moveCursor(3,0) 
+		highlight(1)
+	
+	key(TAB,3):
+		moveCursor(2,0) 
+		highlight(1)
+	
+	key(TAB,4):
+		moveCursor(1,0) 
+		highlight(1)
+
+	key(TAB,5):
+		moveCursor(1,0) 
+		highlight(1)
+
+	key(TAB,6):
+		moveCursor(2,0) 
+		highlight(3)
+	
+	key(TAB,7):
+		moveCursor(4,0)
+
+CTRL_L + ALT_L + S::
+	paste("SELECT * FROM Seniors\n")
+	paste("WHERE NOT GPA < 2.5;")
+	startCursor(7,0)
+	highlight(1)
+
+	key(TAB, 1):
+		moveCursor(6,0)
+		highlight(7)
+
+	key(TAB, 2):
+		moveCursor(10,1)
+		highlight(3)
+
+	key(TAB, 3):
+		moveCursor(1,1)
+		highlight(1)
+
+	key(TAB, 4):
+		moveCursor(1,1)
+		highlight(3)
+	
+	key(TAB, 5):
+		moveCursor(1,1)
+
+
+
+	
+
+
+
+

@@ -55,6 +55,7 @@ namespace ModernDesign.MVVM.View
             start.Arguments = string.Format("{0} {1}", cmd, args);
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
+            start.CreateNoWindow = true;
             using (Process process = Process.Start(start)){
                 using (StreamReader reader = process.StandardOutput){
                     string result = reader.ReadToEnd();
@@ -65,9 +66,9 @@ namespace ModernDesign.MVVM.View
 
         //a helper function that temporarly saves the text box  and send it to a helper python script to verifiy correct compilation and then deletes the file 
         private void CheckBox(object sender, RoutedEventArgs e){
-            string path = $"C:/Users/joshu/Desktop/temp.txt";
+            string path = $"C:/Users/hager/temp.txt";
             File.WriteAllText(path, ScriptTextBox.Text);
-            run_cmd("C:/Users/joshu/Documents/GitHub/CapstoneRepo/CallFunctions.py", $"C:/Users/joshu/Desktop/temp.txt");
+            run_cmd("C:/Users/hager/Documents/GitHub/CapstoneRepo/CallFunctions.py", $"C:/Users/hager/Documents/temp.txt");
             File.Delete(path);
 
         }

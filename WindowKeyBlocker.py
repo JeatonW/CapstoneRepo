@@ -74,6 +74,7 @@ def HotkeyAction(keys,Info):
                     keyboard.wait('tab',suppress=True,trigger_on_release=True)
                     lineNumber,homePressedOnSameLine = moveline(tabInfo[0][1],tabInfo[0][2],lineNumber,homePressedOnSameLine)
 
+                if len(tabInfo)>1:
                     #highlight
                     keyboard.press('left shift')
                     keyboard.press('right shift')
