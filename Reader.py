@@ -329,13 +329,13 @@ def printSyntaxError(command:str, line:int, errorStartLength:int, errorEndLength
 	exit()
 
 #determines what type of command this is (declaration? function?)
-def formatCommand(command:str):
+def formatCommand(tabs:int, command:str):
 
 	if("**BEGIN SCRIPT**" == command):
 		return CF.ScriptBegin()
 	elif("exit" == command):
 		return CF.Exit(command)
-	elif("::" == command[-2:]):
+	elif(tabs == 0):
 		return CF.HotKey(command)
 	elif("while(" == command[:6]):
 		return CF.While(command)
@@ -399,7 +399,7 @@ def convertLinesToTuples(fileName:list) -> list:
 
 			#try to format the command. if there is an error, save it and print it
 			try:
-				formattedCommand = formatCommand(command)
+				formattedCommand = formatCommand(tabs, command)
 			except Exception as e:
 				error = "\nLine " + str(lineIndex+1) + ": " + command + "\n" + str(e)
 				print(error)

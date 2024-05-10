@@ -6,7 +6,14 @@ import sys
 
 def CallFunction(file):
 	tree = Reader.createCommandTree(file)
-	tree.solve()
+	tuples = tree.getHKList()
+	for t in tuples:
+		(hk, tree) = t
+		hktuples = tree.solve()
+		print()
+		print(hk)
+		for h in hktuples:
+			print(h)
 	
 
 
